@@ -89,6 +89,7 @@ private:
 	QDockWidget *profileDock;
 	QToolBar *profileBar;
 	QComboBox *profileCombo;
+	QComboBox *modCombo;
 
 	//LineRuler:
 	RulerModel *lrModel;
@@ -122,6 +123,7 @@ private:
 		X, Y, Idle
 	} cStatus;
 	int tmpX;
+	double modifier;
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -185,6 +187,7 @@ public slots:
 	void updatePR();
 
 	void updateRulers();
+	void updateModifier(int);
 };
 
 #endif // IMAGERASTER_H

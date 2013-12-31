@@ -23,6 +23,7 @@ ImageRaster::ImageRaster(QWidget *parent)
 	//for debugging purpose:
 	initScene(QDir::homePath()+"/oreimo.jpg");
 	markerIndex = 0;
+	modifier = 1.0;
 }
 
 ImageRaster::~ImageRaster()
@@ -303,12 +304,12 @@ void ImageRaster::createToolbars() {
 	mapPR = new QDataWidgetMapper(this);
 	mapPR->setModel(prModel);
 	prDock->view->setModel(prModel);
-	prDock->num1->setText(tr("Area") + QString::fromLatin1(" (µm)"));
-	prDock->num2->hide();
+	prDock->num1->setText(tr("Length") + QString::fromLatin1(" (µm)"));
+	prDock->num2->setText(tr("Area") + QString::fromLatin1(" (µm²)"));
 	prDock->num3->hide();
-	prDock->data2->hide();
 	prDock->data3->hide();
-	mapPR->addMapping(prDock->data1, 4);
+	mapPR->addMapping(prDock->data1, 0);
+	mapPR->addMapping(prDock->data2, 4);
 	mapPR->addMapping(prDock->color1, 5);
 	mapPR->addMapping(prDock->color2, 6);
 	mapPR->addMapping(prDock->penWidth, 7);
@@ -316,7 +317,7 @@ void ImageRaster::createToolbars() {
 	mapPR->addMapping(prDock->fontSize, 9);
 	mapPR->addMapping(prDock->text, 10);
 	addDockWidget(Qt::RightDockWidgetArea, prDock);
-	prDock->view->hideColumn(0);
+	//prDock->view->hideColumn(0);
 	prDock->view->hideColumn(1);
 	prDock->view->hideColumn(2);
 	prDock->view->hideColumn(3);
@@ -329,10 +330,19 @@ void ImageRaster::createToolbars() {
 	prDock->hide();
 
 	profileBar = new QToolBar(this);
-	addToolBar(Qt::TopToolBarArea, profileBar);
 	profileCombo = new QComboBox(profileBar);
+	profileBar->addWidget(new QLabel("Profile:   ", profileBar));
 	profileBar->addWidget(profileCombo);
 	profileCombo->setModel(profileModel);
+	modCombo = new QComboBox(profileBar);
+	modCombo->addItem(QString::fromLatin1("µm"), Qt::DisplayRole);
+	modCombo->addItem("mm", Qt::DisplayRole);
+	modCombo->addItem("cm", Qt::DisplayRole);
+	modCombo->addItem("m", Qt::DisplayRole);
+	profileBar->addSeparator();
+	profileBar->addWidget(new QLabel("Unit:	  ", profileBar));
+	profileBar->addWidget(modCombo);
+	addToolBar(Qt::TopToolBarArea, profileBar);
 	profileBar->hide();
 }
 
@@ -374,6 +384,9 @@ void ImageRaster::connectSignals() {
 		mapProfile, SLOT(setCurrentIndex(int)));
 	connect(profileCombo, SIGNAL(currentIndexChanged(int)),
 		this, SLOT(updateRulers()));
+	connect(modCombo, SIGNAL(currentIndexChanged(int)),
+		this, SLOT(updateModifier(int)));
+	modCombo->setCurrentIndex(0);
 	connect(profileForm->ui->add, &QPushButton::clicked, this, &ImageRaster::appendProfile);
 	connect(profileForm->ui->remove, &QPushButton::clicked, this, &ImageRaster::removeProfile);
 	connect(profileForm->ui->calibrate, &QPushButton::clicked, this, &ImageRaster::calibrateProfile);
@@ -814,9 +827,10 @@ void ImageRaster::updateLR() {
 	for (int i=0; i<lrModel->rowCount(); ++i) {
 		if (auto b = (LineRuler*)lrModel->at(i)) {
 			QLineF line = b->line();
-			int r_length = sqrt(pow(line.dx()*modifierX, 2)+pow(line.dy()*modifierY, 2));
-			if (b->length() == r_length)
+			double r_length = sqrt(pow(line.dx()*modifierX, 2)+pow(line.dy()*modifierY, 2));
+			if (b->length() == r_length && b->mod() == modifier)
 				continue;
+			b->setMod(modifier);
 			lrModel->setData(lrModel->index(i, 0), r_length);
 			lrModel->setData(lrModel->index(i, 10), b->defaultText());
 		}
@@ -845,14 +859,13 @@ void ImageRaster::updateRR() {
 	for (int i=0; i<rrModel->rowCount(); ++i) {
 		if (auto b = (RectRuler*)rrModel->at(i)) {
 			QRectF r = b->rect();
-			int r_width = abs(r.width() * modifierX);
-			int r_height = abs(r.height() * modifierY);
-			int r_area = r_width * r_height;
-			if (b->width() == r_width && b->height() == r_height)
+			double r_width = 1.0 * r.width() * modifierX;
+			double r_height = 1.0 * r.height() * modifierY;
+			if (b->width() == r_width && b->height() == r_height && b->mod() == modifier)
 				continue;
+			b->setMod(modifier);
 			rrModel->setData(rrModel->index(i, 1), r_width);
 			rrModel->setData(rrModel->index(i, 2), r_height);
-			rrModel->setData(rrModel->index(i, 4), r_area);
 			rrModel->setData(rrModel->index(i, 10), b->defaultText());
 		}
 	}
@@ -880,9 +893,10 @@ void ImageRaster::updateCR() {
 	for (int i=0; i<crModel->rowCount(); ++i) {
 		if (auto b = (CircleRuler*)crModel->at(i)) {
 			QRectF r = b->rect();
-			int r_radius = modifierX * r.width()/2;
-			if (b->radius() == r_radius)
+			double r_radius = modifierX * r.width()/2;
+			if (b->radius() == r_radius && b->mod() == modifier)
 				continue;
+			b->setMod(modifier);
 			crModel->setData(crModel->index(i, 3), r_radius);
 			crModel->setData(crModel->index(i, 10), b->defaultText());
 		}
@@ -911,9 +925,10 @@ void ImageRaster::updateTC() {
 	for (int i=0; i<tcModel->rowCount(); ++i) {
 		if (auto b = (Circle2Ruler*)tcModel->at(i)) {
 			QLineF line = b->line();
-			int r_length = sqrt(pow(line.dx()*modifierX, 2)+pow(line.dy()*modifierY, 2));
-			if (b->length() == r_length)
+			double r_length = sqrt(pow(line.dx()*modifierX, 2)+pow(line.dy()*modifierY, 2));
+			if (b->length() == r_length && b->mod() == modifier)
 				continue;
+			b->setMod(modifier);
 			tcModel->setData(tcModel->index(i, 0), r_length);
 			tcModel->setData(tcModel->index(i, 10), b->defaultText());
 		}
@@ -950,6 +965,8 @@ void ImageRaster::updatePR() {
 			paint.setBrush(Qt::black);
 			QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 			p->paint(&paint, option);
+
+			//Count black pixel:
 			int count = 0;
 			for (int i=0; i<img.width(); ++i) {
 				for (int j=0; j<img.height(); ++j) {
@@ -958,11 +975,27 @@ void ImageRaster::updatePR() {
 					}
 				}
 			}
-			int r_area = count * (modifierX * modifierY);
+			double r_area = 1.0 * count * (modifierX * modifierY);
 			delete p;
 			delete option;
-			if (b->area() == r_area)
+
+			//Calculate length:
+			QPointF last;
+			double r_length = 0.0;
+			for (auto point : poly) {
+				if (point == *poly.begin()) {
+					last = point;
+					continue;
+				}
+				QLineF line = QLineF(last, point);
+				r_length += sqrt(pow(line.dx()*modifierX, 2)+pow(line.dy()*modifierY, 2));
+				last = point;
+			}
+
+			if (b->area() == r_area && b->length() == r_length && b->mod() == modifier)
 				continue;
+			b->setMod(modifier);
+			prModel->setData(prModel->index(index, 0), r_length);
 			prModel->setData(prModel->index(index, 4), r_area);
 			prModel->setData(prModel->index(index, 10), b->defaultText());
 		}
@@ -1013,6 +1046,18 @@ void ImageRaster::defaultText() {
 		RectRuler* rr = (RectRuler*)rrModel->at(mapRR->currentIndex());
 		rrModel->setData(rrModel->index(mapRR->currentIndex(), 10), rr->defaultText());
 	}
+	else if (RulerState::Circle == modeToolbar->rState) {
+		CircleRuler* lr = (CircleRuler*)lrModel->at(mapLR->currentIndex());
+		crModel->setData(lrModel->index(mapCR->currentIndex(), 10), lr->defaultText());
+	}
+	else if (RulerState::Circle2 == modeToolbar->rState) {
+		Circle2Ruler* lr = (Circle2Ruler*)lrModel->at(mapLR->currentIndex());
+		tcModel->setData(lrModel->index(mapTC->currentIndex(), 10), lr->defaultText());
+	}
+	else if (RulerState::Polygon == modeToolbar->rState) {
+		PolyRuler* lr = (PolyRuler*)lrModel->at(mapLR->currentIndex());
+		prModel->setData(lrModel->index(mapPR->currentIndex(), 10), lr->defaultText());
+	}
 }
 
 void ImageRaster::updateRulers() {
@@ -1021,4 +1066,17 @@ void ImageRaster::updateRulers() {
 	updateCR();
 	updateTC();
 	updatePR();
+}
+
+void ImageRaster::updateModifier(int i) {
+	rData::Unit u = (rData::Unit)i;
+	if (rData::Unit::Micrometer == u)
+		modifier = 1.0;
+	else if (rData::Unit::Milimeter == u)
+		modifier = 0.001;
+	else if (rData::Unit::Centimeter == u)
+		modifier = 0.0001;
+	else if (rData::Unit::Meter == u)
+		modifier = 0.000001;
+	updateRulers();
 }

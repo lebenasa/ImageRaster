@@ -533,15 +533,15 @@ bool RulerModel::setData(const QModelIndex& index, const QVariant& value, int ro
 	LineRuler* branch = myData.at(index.row());
 	if (Qt::EditRole == role) {
 		if (0 == c)
-			branch->setLength(value.toInt());
+			branch->setLength(value.toDouble());
 		else if (1 == c)
-			branch->setWidth(value.toInt());
+			branch->setWidth(value.toDouble());
 		else if (2 == c)
-			branch->setHeight(value.toInt());
+			branch->setHeight(value.toDouble());
 		else if (3 == c)
-			branch->setRadius(value.toInt());
+			branch->setRadius(value.toDouble());
 		else if (4 == c)
-			branch->setArea(value.toInt());
+			branch->setArea(value.toDouble());
 		else if (5 == c)
 			emit color1Chg(color1(), qvariant_cast<QColor>(value));
 		else if (6 == c)

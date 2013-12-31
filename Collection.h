@@ -110,21 +110,30 @@ public:
 };
 
 class rData {
-	int num1, num2, num3;
+	double num1, num2, num3;
+	double modifier;
 public:
 	rData() :
-		num1(0), num2(0), num3(0) { }
-	virtual int width()  const { return num1; }
-	virtual int height() const { return num2; }
-	virtual int area()   const { return num3; }
-	virtual int radius() const { return num1; }
-	virtual int length() const { return num1; }
+		num1(0), num2(0), num3(0), modifier(1.0) { }
+	enum class Unit {
+		Micrometer, Milimeter, Centimeter, Meter
+	};
+	virtual double width()  const { return num1; }
+	virtual double height() const { return num2; }
+	virtual double area()   const { return num3; }
+	virtual double radius() const { return num1; }
+	virtual double length() const { return num1; }
+	virtual double mod()	const { return modifier; }
 
-	virtual void setWidth(const int& w)		{ num1 = w; }
-	virtual void setHeight(const int& h)	{ num2 = h; }
-	virtual void setArea(const int& a)		{ num3 = a; }
-	virtual void setRadius(const int& r)	{ num1 = r; }
-	virtual void setLength(const int& l)	{ num1 = l; }
+	virtual void setWidth(const double& w)	{ num1 = w; }
+	virtual void setHeight(const double& h)	{ num2 = h; }
+	virtual void setArea(const double& a)	{ num3 = a; }
+	virtual void setRadius(const double& r)	{ num1 = r; }
+	virtual void setLength(const double& l)	{ num1 = l; }
+	virtual void setMod(const Unit& u);
+	virtual void setMod(const double& m) { modifier = m; }
+
+	virtual QString unit() const;
 };
 
 //Shorthand converter:

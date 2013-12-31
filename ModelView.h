@@ -200,6 +200,8 @@ public:
 	void updateWidgets();
 	bool insertBranch(int row, LineRuler* b, const QModelIndex& parent = QModelIndex());
 
+	std::vector<LineRuler*> branches() { return myData; }
+
 	QColor color1() const { return myColor1; }
 	QColor color2() const { return myColor2; }
 	int penWidth()	const { return myPenWidth; }

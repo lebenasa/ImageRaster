@@ -44,7 +44,7 @@ QRectF Arrow::boundingRect() const {
 std::vector<QLineF> Arrow::compose() {
 	const qreal pi = 3.14;
 	QLineF l = QLineF(line());
-	double arrowSize = (l.length() < 40.0) ? 2.0 : l.length()/20.0;
+	double arrowSize = (l.length() < 100.0) ? 5.0 : l.length()/20.0;
 	int dx = l.p2().x() - l.p1().x();
 	int dy = l.p2().y() - l.p1().y();
 	double angle = ::acos(dx/l.length());
@@ -81,7 +81,7 @@ std::vector<QLineF> Arrow::compose() {
 
 //Class ArrowMarker
 ArrowMarker::ArrowMarker(const QLineF& l, Container *branch) : 
-	Arrow((l.length() > 10) ? l : load_oneClickLine(l), (QGraphicsItem*)0, (int)ArrowHead::Start),
+	Arrow((l.length() > 10.0) ? l : load_oneClickLine(l), (QGraphicsItem*)0, (int)ArrowHead::Start),
 	Marker(branch)
 {
 	bgA = new Arrow(line(), this, (int)ArrowHead::Start);
@@ -150,6 +150,10 @@ void ArrowMarker::setPen2(const QPen& p) {
 	QPen pen = p;
 	pen.setWidth(pen1().width()+1);
 	bgA->setPen(pen);
+	QPen tPen = pen;
+	tPen.setWidth(1);
+	myText->setPen(tPen);
+	myText->setBrush(pen1().color());
 }
 
 //Class RectMarker
@@ -195,9 +199,9 @@ void RectMarker::setPen1(const QPen& p) {
 }
 
 void RectMarker::setPen2(const QPen& p) {
-	QPen p2 = QPen(p);
-	p2.setWidth(pen1().width()+1);
-	ArrowMarker::setPen2(p2);
+	QPen pen = QPen(p);
+	pen.setWidth(pen1().width()+1);
+	ArrowMarker::setPen2(pen);
 	bg->setPen(ArrowMarker::pen2());
 }
 
@@ -281,7 +285,7 @@ void LineRuler::setText(const QString& txt) {
 }
 
 QString LineRuler::defaultText() const {
-	return QString().setNum(length()) + QString::fromLatin1(" µm");
+	return QString().setNum(length()*mod()) + unit();
 }
 
 QPointF LineRuler::calculateTextPos() const {
@@ -349,6 +353,9 @@ void LineRuler::setPen2(const QPen& p) {
 	QPen pen = p;
 	pen.setWidth(pen1().width()+1);
 	bg->setPen(pen);
+	QPen tPen = pen;
+	tPen.setWidth(1);
+	myText->setPen(tPen);
 }
 
 void LineRuler::setFont(const QFont& f) {
@@ -390,10 +397,10 @@ QPainterPath RectRuler::shape() const {
 }
 
 QString RectRuler::defaultText() const {
-	QString w = "Width:  " + QString().setNum(width()) + QString::fromLatin1(" µm") + "\n";
-	QString h = "Height: " + QString().setNum(height()) + QString::fromLatin1(" µm") + "\n";
-	//QString a = "Area:   " + QString().setNum(area()) + QString::fromLatin1(" (µm²)");
-	return w+h;
+	QString w = "Width:\t" + QString().setNum(width()*mod()) + unit() + "\n";
+	QString h = "Height:\t" + QString().setNum(height()*mod()) + unit() + "\n";
+	QString a = "Area:\t" + QString().setNum(width()*mod()*height()*mod()) + unit() + QString::fromLatin1("²");
+	return w+h+a;
 }
 
 void RectRuler::setPen1(const QPen& p) {
@@ -438,7 +445,10 @@ QPainterPath CircleRuler::shape() const {
 }
 
 QString CircleRuler::defaultText() const {
-	return "Radius:  " + QString().setNum(radius()) + QString::fromLatin1(" µm");
+	QString r = "Radius:\t" + QString().setNum(radius()*mod()) + unit() + "\n";
+	QString d = "Diameter:\t" + QString().setNum(radius()*2*mod()) + unit() + "\n";
+	QString a = "Area:\t" + QString().setNum(radius()*radius()*3.14*mod()*mod()) + unit() + QString::fromLatin1("²");
+	return r+d+a;
 }
 
 void CircleRuler::setPen1(const QPen& p) {
@@ -529,7 +539,9 @@ QPainterPath PolyRuler::shape() const {
 }
 
 QString PolyRuler::defaultText() const {
-	return "Area:  " + QString().setNum(area()) + QString::fromLatin1(" µm²");
+	QString l = "Length:\t" + QString().setNum(length()*mod()) + unit() + "\n";
+	QString a = "Area:\t" + QString().setNum(area()*mod()*mod()) + unit() + QString::fromLatin1("²");
+	return l+a;
 }
 
 void PolyRuler::setPen1(const QPen& p) {

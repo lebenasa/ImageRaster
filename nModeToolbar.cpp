@@ -143,6 +143,7 @@ void nModeToolbar::markerButton_changed() {
 	}
 	activeMarker = emitter;
 	emit MarkerChanged(mode);
+	emit ModeChanged((AppState)modeButtonGroup->checkedId());
 }
 
 void nModeToolbar::rulerButton_changed() {
@@ -168,6 +169,7 @@ void nModeToolbar::rulerButton_changed() {
 	}
 	activeRuler = emitter;
 	emit RulerChanged(mode);
+	emit ModeChanged((AppState)modeButtonGroup->checkedId());
 }
 
 void nModeToolbar::modeButtonGroup_Clicked(int i) {

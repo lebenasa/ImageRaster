@@ -234,7 +234,7 @@ protected:
 public:
 	PolyRuler(const QPolygonF& r, Container* parent=0);
 	
-	enum { Type = UserType + 7 };
+	enum { Type = UserType + 9 };
 	int type() const { return Type; }
 
 	QRectF boundingRect() const;

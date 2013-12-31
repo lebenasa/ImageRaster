@@ -127,6 +127,7 @@ public:
 
         data1 = new QLineEdit(tab);
         data1->setObjectName(QStringLiteral("data1"));
+        data1->setMaxLength(20);
         data1->setReadOnly(true);
 
         formLayout->setWidget(4, QFormLayout::FieldRole, data1);
@@ -138,6 +139,7 @@ public:
 
         data2 = new QLineEdit(tab);
         data2->setObjectName(QStringLiteral("data2"));
+        data2->setMaxLength(20);
         data2->setReadOnly(true);
 
         formLayout->setWidget(6, QFormLayout::FieldRole, data2);
@@ -149,6 +151,7 @@ public:
 
         data3 = new QLineEdit(tab);
         data3->setObjectName(QStringLiteral("data3"));
+        data3->setMaxLength(20);
         data3->setReadOnly(true);
 
         formLayout->setWidget(7, QFormLayout::FieldRole, data3);
