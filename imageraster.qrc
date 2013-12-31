@@ -1,0 +1,28 @@
+<RCC>
+    <qresource>
+      <file>Resources/Calibration.png</file>
+      <file>Resources/CircleMarker.png</file>
+      <file>Resources/CircleRuler.png</file>
+      <file>Resources/Counter.png</file>
+      <file>Resources/Delete.png</file>
+      <file>Resources/Font.png</file>
+      <file>Resources/FontSize.png</file>
+      <file>Resources/LineMarker.png</file>
+      <file>Resources/LineRuler.png</file>
+      <file>Resources/Normal.png</file>
+      <file>Resources/Open.png</file>
+      <file>Resources/PolyRuler.png</file>
+      <file>Resources/RectMarker.png</file>
+      <file>Resources/RectRuler.png</file>
+      <file>Resources/Save.png</file>
+      <file>Resources/TwoCircleRuler.png</file>
+      <file>Resources/ZoomActual.png</file>
+      <file>Resources/ZoomFit.png</file>
+      <file>Resources/ZoomIn.png</file>
+      <file>Resources/ZoomOut.png</file>
+      <file>Resources/Undo.png</file>
+      <file>Resources/Redo.png</file>
+      <file>Resources/SmartRaster.png</file>
+      <file>Resources/linecolor.png</file>
+    </qresource>
+</RCC>

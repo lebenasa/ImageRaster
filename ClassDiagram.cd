@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Container" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAQAAAAAAAAEAAAAAAQACiAEAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Collection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Format" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAABAAAAAAAAAAAAAAAIgAgAAgACBBAAAAABI=</HashCode>
+      <FileName>Collection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mData" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAABAAEAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Collection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Marker" Collapsed="true">
+    <Position X="3.25" Y="1.5" Width="1.5" />
+    <InheritanceLine Type="mData" FixedFromPoint="true">
+      <Path>
+        <Point X="2" Y="2.812" />
+        <Point X="2.375" Y="2.812" />
+        <Point X="2.375" Y="2.069" />
+        <Point X="3.25" Y="2.069" />
+      </Path>
+    </InheritanceLine>
+    <InheritanceLine Type="Container" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="0.75" />
+        <Point X="2.649" Y="0.75" />
+        <Point X="2.649" Y="1.625" />
+        <Point X="3.25" Y="1.625" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Arrow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Arrow" Collapsed="true">
+    <Position X="3.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABgAAAAAAAAAABAAAQAAAAAgAAIBAAAAAAgAAAAABAA=</HashCode>
+      <FileName>Arrow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArrowMarker" Collapsed="true">
+    <Position X="5.5" Y="1.5" Width="1.5" />
+    <InheritanceLine Type="Arrow" FixedFromPoint="true">
+      <Path>
+        <Point X="4.75" Y="3.062" />
+        <Point X="5.125" Y="3.062" />
+        <Point X="5.125" Y="1.91" />
+        <Point X="5.5" Y="1.91" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>QBgAAAAAAAAAAAIEAIAAAAAAEAABgAAAIQAAAAAABAA=</HashCode>
+      <FileName>Arrow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CircleMarker" Collapsed="true">
+    <Position X="7.75" Y="2.5" Width="1.5" />
+    <InheritanceLine Type="ArrowMarker" FixedToPoint="true">
+      <Path>
+        <Point X="6.25" Y="2.32" />
+        <Point X="6.25" Y="2.875" />
+        <Point X="7.75" Y="2.875" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ABAAAAAQAAgAIAIAAAAAAAAAAAABAAgAACCBAAAABAA=</HashCode>
+      <FileName>Arrow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RectMarker" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <InheritanceLine Type="ArrowMarker" FixedToPoint="true">
+      <Path>
+        <Point X="6.25" Y="1.5" />
+        <Point X="6.25" Y="0.812" />
+        <Point X="7.75" Y="0.812" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ABAAAAAQIAAAIAIAAAAAgAAAAAABAAgAACABAAAABAA=</HashCode>
+      <FileName>Arrow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

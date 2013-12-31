@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--@author=Leben Asa-->
+<!--Application settings for ImageRaster.exe-->
+<!--Manual editting is not recommended-->
+<app>
+  <calibration>
+    <profile name="Obj4x">
+      <x>1600</x>
+      <y>900</y>
+    </profile>
+    <profile name="Obj40x">
+      <x>160</x>
+      <y>90</y>
+    </profile>
+  </calibration>
+</app>
