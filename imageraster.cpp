@@ -21,7 +21,7 @@ ImageRaster::ImageRaster(QWidget *parent)
 	createActions();
 	createToolbars();
 	//for debugging purpose:
-	initScene(QDir::homePath()+"/oreimo.jpg");
+	//initScene(QDir::homePath()+"/oreimo.jpg");
 	markerIndex = 0;
 	modifier = 1.0;
 }
@@ -454,7 +454,7 @@ void ImageRaster::loadSettings() {
 void ImageRaster::openImage() {
 	QFileDialog openFileDg(this);
 	openFileDg.setFileMode(QFileDialog::ExistingFile);
-	openFileDg.setNameFilter("Images (*.png *.jpg *.bmp *.gif)");
+	openFileDg.setNameFilter("Portable Network Graphics File (*.png);;JPEG File-Format (*.jpg);;Bitmap File (*.bmp)");
 	openFileDg.setDirectory(QDir::home());
 	openFileDg.setViewMode(QFileDialog::Detail);
 	QString imgName;
@@ -501,7 +501,7 @@ void ImageRaster::saveImage() {
 	saveDg.setAcceptMode(QFileDialog::AcceptSave);
 	saveDg.setFileMode(QFileDialog::AnyFile);
 	saveDg.setDirectory(QDir::home());
-	saveDg.setNameFilter("Images (*.png *.jpg *.bmp *.gif)");
+	saveDg.setNameFilter("Portable Network Graphics File (*.png);;JPEG File-Format (*.jpg);;Bitmap File (*.bmp)");
 	saveDg.setOption(QFileDialog::DontUseNativeDialog);
 	QString imgName;
 	//QString imgName = QFileDialog::getSaveFileName(this, "Save Edited Image",
