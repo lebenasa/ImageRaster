@@ -455,7 +455,7 @@ void ImageRaster::openImage() {
 	QFileDialog openFileDg(this);
 	openFileDg.setFileMode(QFileDialog::ExistingFile);
 	openFileDg.setNameFilter("Portable Network Graphics File (*.png);;JPEG File-Format (*.jpg);;Bitmap File (*.bmp)");
-	openFileDg.setDirectory(QDir::home());
+	//openFileDg.setDirectory(QDir::home());
 	openFileDg.setViewMode(QFileDialog::Detail);
 	QString imgName;
 	if (openFileDg.exec())
@@ -500,7 +500,7 @@ void ImageRaster::saveImage() {
 	QFileDialog saveDg(this);
 	saveDg.setAcceptMode(QFileDialog::AcceptSave);
 	saveDg.setFileMode(QFileDialog::AnyFile);
-	saveDg.setDirectory(QDir::home());
+	//saveDg.setDirectory(QDir::home());
 	saveDg.setNameFilter("Portable Network Graphics File (*.png);;JPEG File-Format (*.jpg);;Bitmap File (*.bmp)");
 	saveDg.setOption(QFileDialog::DontUseNativeDialog);
 	QString imgName;
