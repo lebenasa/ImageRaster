@@ -262,6 +262,20 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>topleft</tabstop>
+  <tabstop>top</tabstop>
+  <tabstop>topright</tabstop>
+  <tabstop>r</tabstop>
+  <tabstop>center</tabstop>
+  <tabstop>right</tabstop>
+  <tabstop>bottomleft</tabstop>
+  <tabstop>bottom</tabstop>
+  <tabstop>bottomright</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>comboBox_3</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
