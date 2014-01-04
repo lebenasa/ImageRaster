@@ -1081,5 +1081,6 @@ void ImageRaster::on_actionScale_triggered() {
 }
 
 void ImageRaster::addScale(int s1, int s2) {
-
+	//Collect data from scaleDock:
+	//ScaleType type = scaleDock->style_->currentIndex();
 }

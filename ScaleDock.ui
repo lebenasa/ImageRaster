@@ -147,7 +147,7 @@
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QComboBox" name="comboBox_2">
+     <widget class="QComboBox" name="length">
       <property name="editable">
        <bool>true</bool>
       </property>
@@ -204,7 +204,7 @@
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="unit">
       <item>
        <property name="text">
         <string>µm</string>
@@ -228,7 +228,7 @@
      </widget>
     </item>
     <item row="7" column="0">
-     <widget class="QComboBox" name="comboBox_3">
+     <widget class="QComboBox" name="style_">
       <item>
        <property name="text">
         <string>Bar</string>
@@ -272,9 +272,9 @@
   <tabstop>bottomleft</tabstop>
   <tabstop>bottom</tabstop>
   <tabstop>bottomright</tabstop>
-  <tabstop>comboBox_2</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>comboBox_3</tabstop>
+  <tabstop>length</tabstop>
+  <tabstop>unit</tabstop>
+  <tabstop>style_</tabstop>
  </tabstops>
  <resources/>
  <connections/>

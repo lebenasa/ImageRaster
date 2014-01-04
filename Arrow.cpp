@@ -599,7 +599,7 @@ SimpleScale::SimpleScale(const QLineF& l, QGraphicsItem* parent) :
 }
 
 void SimpleScale::setPen1(const QPen& p) {
-	setPen1(p);
+	setPen(p);
 	tick1->setPen1(p);
 	tick2->setPen1(p);
 	text1->setBrush(p.color());
@@ -607,7 +607,7 @@ void SimpleScale::setPen1(const QPen& p) {
 }
 
 void SimpleScale::setPen2(const QPen& p) {
-	setPen2(p);
+	LineItem::setPen2(p);
 	tick1->setPen2(p);
 	tick2->setPen2(p);
 }
@@ -633,14 +633,14 @@ BarScale::BarScale(const QLineF& l, QGraphicsItem* parent) :
 {
 	if (l.dx() == 0.0) {
 		//vertical line
-		for (int i=1; i<=5; i+2) {
+		for (int i=1; i<=5; i+=2) {
 			QLineF li = QLineF(l.p1()+QPointF(0, 0.1*i*l.length()), l.p1()+QPointF(0, 0.1*(i+1)*l.length()));
 			QGraphicsLineItem* stripe = new QGraphicsLineItem(li, this);
 			stripes.append(stripe);
 		}
 	}
 	else {
-		for (int i=1; i<=5; i+2) {
+		for (int i=1; i<=5; i+=2) {
 			QLineF li = QLineF(l.p1()+QPointF(0.1*i*l.length(), 0), l.p1()+QPointF(0.1*(i+1)*l.length(), 0));
 			QGraphicsLineItem* stripe = new QGraphicsLineItem(li, this);
 			stripes.append(stripe);
@@ -660,7 +660,7 @@ BarScale::BarScale(const QLineF& l, QGraphicsItem* parent) :
 }
 
 void BarScale::setPen1(const QPen& p) {
-	setPen1(p);
+	setPen(p);
 	text1->setBrush(p.color());
 	text2->setBrush(p.color());
 	for (auto stripe : stripes)
@@ -668,7 +668,7 @@ void BarScale::setPen1(const QPen& p) {
 }
 
 void BarScale::setPen2(const QPen& p) {
-	setPen2(p);
+	LineItem::setPen2(p);
 }
 
 void BarScale::setText(const QString& t1, const QString& t2) {
@@ -740,7 +740,7 @@ void RulerScale::setPen1(const QPen& p) {
 }
 
 void RulerScale::setPen2(const QPen& p) {
-	setPen2(p);
+	SimpleScale::setPen2(p);
 	for (auto tick : ticks)
 		tick->setPen2(p);
 }

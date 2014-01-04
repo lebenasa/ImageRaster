@@ -30,6 +30,7 @@ class ScaleDock :
 {
 	Q_OBJECT
 	QList<QCheckBox*> myCheckBox;
+	friend class ImageRaster;
 public:
 	ScaleDock(QWidget* parent=0);
 	QList<QCheckBox*> checkBox() const {

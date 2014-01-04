@@ -41,6 +41,9 @@ public:
 	void sceneAddItem(QGraphicsItem* item);
 	void sceneRemoveItem(QGraphicsItem* item);
 
+	enum ScaleType {
+		Bar, Line, Simple };
+
 private:
 	Ui::ImageRasterClass ui;
 	RasterScene *scene;

@@ -49,9 +49,9 @@ public:
     QCheckBox *bottom;
     QCheckBox *right;
     QLabel *label;
-    QComboBox *comboBox_2;
-    QComboBox *comboBox;
-    QComboBox *comboBox_3;
+    QComboBox *length;
+    QComboBox *unit;
+    QComboBox *style_;
     QSpacerItem *verticalSpacer;
 
     void setupUi(QDockWidget *ScaleDock)
@@ -161,21 +161,21 @@ public:
 
         gridLayout_3->addWidget(label, 0, 0, 1, 1);
 
-        comboBox_2 = new QComboBox(dockWidgetContents);
-        comboBox_2->setObjectName(QStringLiteral("comboBox_2"));
-        comboBox_2->setEditable(true);
+        length = new QComboBox(dockWidgetContents);
+        length->setObjectName(QStringLiteral("length"));
+        length->setEditable(true);
 
-        gridLayout_3->addWidget(comboBox_2, 3, 0, 1, 1);
+        gridLayout_3->addWidget(length, 3, 0, 1, 1);
 
-        comboBox = new QComboBox(dockWidgetContents);
-        comboBox->setObjectName(QStringLiteral("comboBox"));
+        unit = new QComboBox(dockWidgetContents);
+        unit->setObjectName(QStringLiteral("unit"));
 
-        gridLayout_3->addWidget(comboBox, 5, 0, 1, 1);
+        gridLayout_3->addWidget(unit, 5, 0, 1, 1);
 
-        comboBox_3 = new QComboBox(dockWidgetContents);
-        comboBox_3->setObjectName(QStringLiteral("comboBox_3"));
+        style_ = new QComboBox(dockWidgetContents);
+        style_->setObjectName(QStringLiteral("style_"));
 
-        gridLayout_3->addWidget(comboBox_3, 7, 0, 1, 1);
+        gridLayout_3->addWidget(style_, 7, 0, 1, 1);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -190,9 +190,9 @@ public:
         QWidget::setTabOrder(right, bottomleft);
         QWidget::setTabOrder(bottomleft, bottom);
         QWidget::setTabOrder(bottom, bottomright);
-        QWidget::setTabOrder(bottomright, comboBox_2);
-        QWidget::setTabOrder(comboBox_2, comboBox);
-        QWidget::setTabOrder(comboBox, comboBox_3);
+        QWidget::setTabOrder(bottomright, length);
+        QWidget::setTabOrder(length, unit);
+        QWidget::setTabOrder(unit, style_);
 
         retranslateUi(ScaleDock);
 
@@ -215,8 +215,8 @@ public:
         bottom->setText(QString());
         right->setText(QString());
         label->setText(QApplication::translate("ScaleDock", "Position (center=moveable):", 0));
-        comboBox_2->clear();
-        comboBox_2->insertItems(0, QStringList()
+        length->clear();
+        length->insertItems(0, QStringList()
          << QApplication::translate("ScaleDock", "1", 0)
          << QApplication::translate("ScaleDock", "5", 0)
          << QApplication::translate("ScaleDock", "10", 0)
@@ -228,15 +228,15 @@ public:
          << QApplication::translate("ScaleDock", "10000", 0)
          << QApplication::translate("ScaleDock", "50000", 0)
         );
-        comboBox->clear();
-        comboBox->insertItems(0, QStringList()
+        unit->clear();
+        unit->insertItems(0, QStringList()
          << QApplication::translate("ScaleDock", "\302\265m", 0)
          << QApplication::translate("ScaleDock", "mm", 0)
          << QApplication::translate("ScaleDock", "cm", 0)
          << QApplication::translate("ScaleDock", "m", 0)
         );
-        comboBox_3->clear();
-        comboBox_3->insertItems(0, QStringList()
+        style_->clear();
+        style_->insertItems(0, QStringList()
          << QApplication::translate("ScaleDock", "Bar", 0)
          << QApplication::translate("ScaleDock", "Ruler", 0)
          << QApplication::translate("ScaleDock", "Simple Line", 0)
