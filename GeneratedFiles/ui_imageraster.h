@@ -28,6 +28,8 @@ QT_BEGIN_NAMESPACE
 class Ui_ImageRasterClass
 {
 public:
+    QAction *actionScale;
+    QAction *actionBlend;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QGraphicsView *graphicsView;
@@ -35,6 +37,7 @@ public:
     QMenu *menuFile;
     QMenu *menuView;
     QMenu *menuEdit;
+    QMenu *menuTools;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -46,6 +49,10 @@ public:
         QIcon icon;
         icon.addFile(QStringLiteral(":/Resources/SmartRaster.png"), QSize(), QIcon::Normal, QIcon::Off);
         ImageRasterClass->setWindowIcon(icon);
+        actionScale = new QAction(ImageRasterClass);
+        actionScale->setObjectName(QStringLiteral("actionScale"));
+        actionBlend = new QAction(ImageRasterClass);
+        actionBlend->setObjectName(QStringLiteral("actionBlend"));
         centralWidget = new QWidget(ImageRasterClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -68,6 +75,8 @@ public:
         menuView->setObjectName(QStringLiteral("menuView"));
         menuEdit = new QMenu(menuBar);
         menuEdit->setObjectName(QStringLiteral("menuEdit"));
+        menuTools = new QMenu(menuBar);
+        menuTools->setObjectName(QStringLiteral("menuTools"));
         ImageRasterClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(ImageRasterClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -79,6 +88,7 @@ public:
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuEdit->menuAction());
         menuBar->addAction(menuView->menuAction());
+        menuBar->addAction(menuTools->menuAction());
 
         retranslateUi(ImageRasterClass);
 
@@ -88,9 +98,18 @@ public:
     void retranslateUi(QMainWindow *ImageRasterClass)
     {
         ImageRasterClass->setWindowTitle(QApplication::translate("ImageRasterClass", "Image Raster", 0));
+        actionScale->setText(QApplication::translate("ImageRasterClass", "Scale Editor", 0));
+#ifndef QT_NO_TOOLTIP
+        actionScale->setToolTip(QApplication::translate("ImageRasterClass", "Use this to add scale for your scene.", 0));
+#endif // QT_NO_TOOLTIP
+        actionBlend->setText(QApplication::translate("ImageRasterClass", "Blend", 0));
+#ifndef QT_NO_TOOLTIP
+        actionBlend->setToolTip(QApplication::translate("ImageRasterClass", "A tool to create professional thumbnail in your scene.", 0));
+#endif // QT_NO_TOOLTIP
         menuFile->setTitle(QApplication::translate("ImageRasterClass", "File", 0));
         menuView->setTitle(QApplication::translate("ImageRasterClass", "View", 0));
         menuEdit->setTitle(QApplication::translate("ImageRasterClass", "Edit", 0));
+        menuTools->setTitle(QApplication::translate("ImageRasterClass", "Tools", 0));
     } // retranslateUi
 
 };

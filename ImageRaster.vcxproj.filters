@@ -143,6 +143,12 @@
     <ClCompile Include="Forms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Forms.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Forms.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -171,9 +177,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_RulerDock.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Forms.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_MarkerDock.h">
       <Filter>Generated Files</Filter>
@@ -251,6 +254,9 @@
     </CustomBuild>
     <CustomBuild Include="ScaleDock.ui">
       <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

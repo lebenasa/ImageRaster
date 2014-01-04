@@ -28,6 +28,7 @@ class Circle2Ruler;
 class PolyRuler;
 class RulerModel;
 class RulerDock;
+class ScaleDock;
 
 class ImageRaster : public QMainWindow
 {
@@ -112,6 +113,9 @@ private:
 	QDataWidgetMapper *mapPR;
 	RulerDock *prDock;
 
+	//Features:
+	ScaleDock *scaleDock;
+
 	//Formats:
 	int markerIndex;
 
@@ -188,6 +192,9 @@ public slots:
 
 	void updateRulers();
 	void updateModifier(int);
+
+	void on_actionScale_triggered();
+	void addScale(int, int);
 };
 
 #endif // IMAGERASTER_H

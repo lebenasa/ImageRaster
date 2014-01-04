@@ -555,3 +555,192 @@ void PolyRuler::setPen2(const QPen& p) {
 	pen.setWidth(pen1().width()+1);
 	bgR->setPen(pen);
 }
+
+//class LineItem
+LineItem::LineItem(const QLineF& l, QGraphicsItem* parent) :
+	QGraphicsLineItem(l, parent)
+{
+	bg = new QGraphicsLineItem(l, this);
+	bg->setFlag(QGraphicsItem::ItemStacksBehindParent);
+	setPen1(QPen(Qt::black));
+	setPen2(QPen(Qt::white));
+}
+
+void LineItem::setPen1(const QPen& p) {
+	pen1 = p;
+	setPen(p);
+	setPen2(pen2);
+}
+
+void LineItem::setPen2(const QPen& p) {
+	pen2 = p;
+	pen2.setWidth(pen1.width()+1);
+	bg->setPen(pen2);
+}
+
+//class SimpleScale
+SimpleScale::SimpleScale(const QLineF& l, QGraphicsItem* parent) :
+	LineItem(l, parent)
+{
+	QLineF t1, t2;
+	if (l.dx() == 0.0) {
+		//vertical line
+		t1 = QLineF(l.p1() + QPointF(-10, 0), l.p1() + QPointF(10, 0));
+		t2 = QLineF(l.p2() + QPointF(-10, 0), l.p2() + QPointF(10, 0));
+	}
+	else {
+		t1 = QLineF(l.p1() + QPointF(0, -10), l.p1() + QPointF(0, 10));
+		t2 = QLineF(l.p2() + QPointF(0, -10), l.p2() + QPointF(0, 10));
+	}
+	tick1 = new LineItem(t1, this);
+	tick2 = new LineItem(t2, this);
+	text1 = new QGraphicsSimpleTextItem("0", this);
+	text2 = new QGraphicsSimpleTextItem("", this);
+}
+
+void SimpleScale::setPen1(const QPen& p) {
+	setPen1(p);
+	tick1->setPen1(p);
+	tick2->setPen1(p);
+	text1->setBrush(p.color());
+	text2->setBrush(p.color());
+}
+
+void SimpleScale::setPen2(const QPen& p) {
+	setPen2(p);
+	tick1->setPen2(p);
+	tick2->setPen2(p);
+}
+
+void SimpleScale::setText(const QString& t1, const QString& t2) {
+	text1->setText(t1);
+	text2->setText(t2);
+	QLineF l = line();
+	if (l.dx() == 0.0) {
+		//vertical line
+		text1->setPos(l.p1() + QPointF(15, text1->boundingRect().height()/2));
+		text2->setPos(l.p2() + QPointF(15, text2->boundingRect().height()/2));
+	}
+	else {
+		text1->setPos(l.p1() + QPointF(text1->boundingRect().width()/2, 15));
+		text2->setPos(l.p2() + QPointF(text2->boundingRect().width()/2, 15));
+	}
+}
+
+//class BarScale
+BarScale::BarScale(const QLineF& l, QGraphicsItem* parent) :
+	LineItem(l, parent)
+{
+	if (l.dx() == 0.0) {
+		//vertical line
+		for (int i=1; i<=5; i+2) {
+			QLineF li = QLineF(l.p1()+QPointF(0, 0.1*i*l.length()), l.p1()+QPointF(0, 0.1*(i+1)*l.length()));
+			QGraphicsLineItem* stripe = new QGraphicsLineItem(li, this);
+			stripes.append(stripe);
+		}
+	}
+	else {
+		for (int i=1; i<=5; i+2) {
+			QLineF li = QLineF(l.p1()+QPointF(0.1*i*l.length(), 0), l.p1()+QPointF(0.1*(i+1)*l.length(), 0));
+			QGraphicsLineItem* stripe = new QGraphicsLineItem(li, this);
+			stripes.append(stripe);
+		}
+	}
+	text1 = new QGraphicsSimpleTextItem("0", this);
+	text2 = new QGraphicsSimpleTextItem("", this);
+	//Default format:
+	QPen p1 = QPen(QBrush(Qt::black), 6, Qt::SolidLine, Qt::FlatCap);
+	QPen p2 = QPen(QBrush(Qt::white), 6, Qt::SolidLine, Qt::FlatCap);
+	setPen(p1);
+	LineItem::setPen2(QPen(Qt::transparent));
+	for (auto stripe : stripes)
+		stripe->setPen(p2);
+	text1->setBrush(Qt::black);
+	text2->setBrush(Qt::black);
+}
+
+void BarScale::setPen1(const QPen& p) {
+	setPen1(p);
+	text1->setBrush(p.color());
+	text2->setBrush(p.color());
+	for (auto stripe : stripes)
+		stripe->setPen(p);
+}
+
+void BarScale::setPen2(const QPen& p) {
+	setPen2(p);
+}
+
+void BarScale::setText(const QString& t1, const QString& t2) {
+	text1->setText(t1);
+	text2->setText(t2);
+	QLineF l = line();
+	if (l.dx() == 0.0) {
+		//vertical line
+		text1->setPos(l.p1() + QPointF(15, text1->boundingRect().height()/2));
+		text2->setPos(l.p2() + QPointF(15, text2->boundingRect().height()/2));
+	}
+	else {
+		text1->setPos(l.p1() + QPointF(text1->boundingRect().width()/2, 15));
+		text2->setPos(l.p2() + QPointF(text2->boundingRect().width()/2, 15));
+	}
+}
+
+//class RulerScale:
+RulerScale::RulerScale(const QLineF& l, QGraphicsItem* parent) :
+	SimpleScale(l, parent)
+{
+	//Generate ticks:
+	double may = 10.0;
+	double mid = 7.0;
+	double min = 5.0;
+	if (l.dx() == 0.0) {
+		//vertical line
+		for (int i=1; i<10; ++i) {
+			for (int j=1; j<10; ++j) {
+				if (j==5) {
+					QLineF li = QLineF(l.p1()+QPointF(mid, (0.1*i+0.01*j)*l.length()), l.p1()+QPointF(-mid, (0.1*i+0.01*j)*l.length()));
+					LineItem* tick = new LineItem(li, this);
+					ticks.append(tick);
+					continue;
+				}
+				QLineF li = QLineF(l.p1()+QPointF(min, (0.1*i+0.01*j)*l.length()), l.p1()+QPointF(-min, (0.1*i+0.01*j)*l.length()));
+				LineItem* tick = new LineItem(li, this);
+				ticks.append(tick);
+			}
+			QLineF li = QLineF(l.p1()+QPointF(may, 0.1*i*l.length()), l.p1()+QPointF(-may, 0.1*i*l.length()));
+			LineItem* tick = new LineItem(li, this);
+			ticks.append(tick);
+		}
+	}
+	else {
+		for (int i=1; i<10; ++i) {
+			for (int j=1; j<10; ++j) {
+				if (j==5) {
+					QLineF li = QLineF(l.p1()+QPointF((0.1*i+0.01*j)*l.length(), mid), l.p1()+QPointF((0.1*i+0.01*j)*l.length(), -mid));
+					LineItem* tick = new LineItem(li, this);
+					ticks.append(tick);
+					continue;
+				}
+				QLineF li = QLineF(l.p1()+QPointF((0.1*i+0.01*j)*l.length(), min), l.p1()+QPointF((0.1*i+0.01*j)*l.length(), -min));
+				LineItem* tick = new LineItem(li, this);
+				ticks.append(tick);
+			}
+			QLineF li = QLineF(l.p1()+QPointF(0.1*i*l.length(), may), l.p1()+QPointF(0.1*i*l.length(), -may));
+			LineItem* tick = new LineItem(li, this);
+			ticks.append(tick);
+		}
+	}
+}
+
+void RulerScale::setPen1(const QPen& p) {
+	SimpleScale::setPen1(p);
+	for (auto tick : ticks)
+		tick->setPen1(p);
+}
+
+void RulerScale::setPen2(const QPen& p) {
+	setPen2(p);
+	for (auto tick : ticks)
+		tick->setPen2(p);
+}

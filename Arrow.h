@@ -248,3 +248,66 @@ public:
 
 	QPolygonF rect() { return myRect->polygon(); }
 };
+
+class LineItem:
+	public QGraphicsLineItem
+{
+	//Convenient line with background
+	QGraphicsLineItem *bg;
+	QPen pen1, pen2;
+public:
+	LineItem(const QLineF& l, QGraphicsItem* parent=0);
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+};
+
+class SimpleScale:
+	public LineItem
+{
+	QGraphicsSimpleTextItem *text1, *text2;
+	LineItem *tick1, *tick2;
+	QPen pen1, pen2;
+public:
+	SimpleScale(const QLineF& l, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 10 };
+	int type() const { return Type; }
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+
+	void setText(const QString& t1, const QString& t2);
+};
+
+class BarScale:
+	public LineItem
+{
+	QGraphicsSimpleTextItem *text1, *text2;
+	QList<QGraphicsLineItem*> stripes;
+	QPen pen1, pen2;
+public:
+	BarScale(const QLineF& l, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 11 };
+	int type() const { return Type; }
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+
+	void setText(const QString& t1, const QString& t2);
+};
+
+class RulerScale:
+	public SimpleScale
+{
+	QList<LineItem*> ticks;
+public:
+	RulerScale(const QLineF& l, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 12 };
+	int type() const { return Type; }
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+};

@@ -63,7 +63,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout">
             <item row="1" column="0">
-             <widget class="QCheckBox" name="r">
+             <widget class="QCheckBox" name="left_">
               <property name="text">
                <string/>
               </property>
@@ -266,7 +266,7 @@
   <tabstop>topleft</tabstop>
   <tabstop>top</tabstop>
   <tabstop>topright</tabstop>
-  <tabstop>r</tabstop>
+  <tabstop>left_</tabstop>
   <tabstop>center</tabstop>
   <tabstop>right</tabstop>
   <tabstop>bottomleft</tabstop>

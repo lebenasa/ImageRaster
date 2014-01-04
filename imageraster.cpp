@@ -15,6 +15,7 @@ ImageRaster::ImageRaster(QWidget *parent)
 	: QMainWindow(parent), hasImage(false)
 {
 	ui.setupUi(this);
+	QMetaObject::connectSlotsByName(this);
 	scene = new RasterScene(this);
 	modeToolbar = new nModeToolbar("Mode Select", this);
 	loadSettings();
@@ -66,21 +67,7 @@ void ImageRaster::createActions() {
 
 	zoomIndicator = new QLabel;
 	statusBar()->addPermanentWidget(zoomIndicator);
-
-	myObjects.push_back(openImageAct);
-	myObjects.push_back(openImageAct);
-	myObjects.push_back(saveImageAct);
-	myObjects.push_back(deleteItemAct);
-	myObjects.push_back(undoAct);
-	myObjects.push_back(redoAct);
-	myObjects.push_back(deleteItemAct);
-	myObjects.push_back(zoomInAct);
-	myObjects.push_back(zoomOutAct);
-	myObjects.push_back(zoomToViewAct);
-	myObjects.push_back(zoomToActualAct);
-	myObjects.push_back(zoomIndicator);
-	myObjects.push_back(undoStack);
-
+	
 	ui.mainToolBar->addAction(openImageAct);
 	ui.mainToolBar->addAction(saveImageAct);
 	ui.mainToolBar->addAction(deleteItemAct);
@@ -101,6 +88,9 @@ void ImageRaster::createActions() {
 	ui.menuView->addAction(zoomToActualAct);
 	ui.menuEdit->addAction(undoAct);
 	ui.menuEdit->addAction(redoAct);
+
+	ui.menuTools->addAction(ui.actionScale);
+	ui.menuTools->addAction(ui.actionBlend);
 }
 
 void ImageRaster::createToolbars() {
@@ -344,6 +334,11 @@ void ImageRaster::createToolbars() {
 	profileBar->addWidget(modCombo);
 	addToolBar(Qt::TopToolBarArea, profileBar);
 	profileBar->hide();
+
+	//Scale:
+	scaleDock = new ScaleDock(this);
+	addDockWidget(Qt::RightDockWidgetArea, scaleDock);
+	scaleDock->hide();
 }
 
 void ImageRaster::connectSignals() {
@@ -1079,4 +1074,12 @@ void ImageRaster::updateModifier(int i) {
 	else if (rData::Unit::Meter == u)
 		modifier = 0.000001;
 	updateRulers();
+}
+
+void ImageRaster::on_actionScale_triggered() {
+	scaleDock->show();
+}
+
+void ImageRaster::addScale(int s1, int s2) {
+
 }

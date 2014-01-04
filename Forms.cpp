@@ -26,12 +26,17 @@ ScaleDock::ScaleDock(QWidget* parent) :
 	Ui::ScaleDock()
 {
 	Ui::ScaleDock::setupUi(this);
-	for (auto widget : this->children()) {
-		if (QCheckBox* cb = qobject_cast<QCheckBox*>(widget)) {
-			myCheckBox.append(cb);
-			connect(cb, QCheckBox::stateChanged, this, ScaleDock::checkState);
-		}
-	}
+	myCheckBox.append(topleft);
+	myCheckBox.append(top);
+	myCheckBox.append(topright);
+	myCheckBox.append(left_);
+	myCheckBox.append(center);
+	myCheckBox.append(right);
+	myCheckBox.append(bottomleft);
+	myCheckBox.append(bottom);
+	myCheckBox.append(bottomright);
+	for (auto cb : myCheckBox)
+		connect(cb, &QCheckBox::stateChanged, this, &ScaleDock::checkState);
 }
 
 void ScaleDock::checkState() {
@@ -44,7 +49,7 @@ void ScaleDock::checkState() {
 			c1 = T;
 		else if (cb->objectName() == "topright")
 			c1 = TR;
-		else if (cb->objectName() == "left")
+		else if (cb->objectName() == "left_")
 			c1 = L;
 		else if (cb->objectName() == "center")
 			c1 = C;
@@ -65,7 +70,7 @@ void ScaleDock::checkState() {
 			c2 = T;
 		else if (cb->objectName() == "topright" && c1 != TR)
 			c2 = TR;
-		else if (cb->objectName() == "left" && c1 != L)
+		else if (cb->objectName() == "left_" && c1 != L)
 			c2 = L;
 		else if (cb->objectName() == "center" && c1 != C)
 			c2 = C;
@@ -78,13 +83,16 @@ void ScaleDock::checkState() {
 		else if (cb->objectName() == "bottomright" && c1 != BR)
 			c2 = BR;
 	}
-	if (None != c1 && None != c2)
-		for (auto cb : myCheckBox)
+	if (None != c1 && None != c2) {
+		for (auto cb : myCheckBox) {
 			if (!cb->isChecked())
 				cb->setEnabled(false);
-	else
+		}
+	}
+	else {
 		for (auto cb : myCheckBox)
 			cb->setEnabled(true);
+	}
 	emit checked_changed(c1, c2);
 }
 

@@ -39,7 +39,7 @@ public:
     QFrame *frame;
     QHBoxLayout *horizontalLayout;
     QGridLayout *gridLayout;
-    QCheckBox *r;
+    QCheckBox *left_;
     QCheckBox *bottomleft;
     QCheckBox *bottomright;
     QCheckBox *topleft;
@@ -97,10 +97,10 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         gridLayout = new QGridLayout();
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        r = new QCheckBox(frame);
-        r->setObjectName(QStringLiteral("r"));
+        left_ = new QCheckBox(frame);
+        left_->setObjectName(QStringLiteral("left_"));
 
-        gridLayout->addWidget(r, 1, 0, 1, 1);
+        gridLayout->addWidget(left_, 1, 0, 1, 1);
 
         bottomleft = new QCheckBox(frame);
         bottomleft->setObjectName(QStringLiteral("bottomleft"));
@@ -182,6 +182,17 @@ public:
         gridLayout_3->addItem(verticalSpacer, 8, 0, 1, 1);
 
         ScaleDock->setWidget(dockWidgetContents);
+        QWidget::setTabOrder(topleft, top);
+        QWidget::setTabOrder(top, topright);
+        QWidget::setTabOrder(topright, left_);
+        QWidget::setTabOrder(left_, center);
+        QWidget::setTabOrder(center, right);
+        QWidget::setTabOrder(right, bottomleft);
+        QWidget::setTabOrder(bottomleft, bottom);
+        QWidget::setTabOrder(bottom, bottomright);
+        QWidget::setTabOrder(bottomright, comboBox_2);
+        QWidget::setTabOrder(comboBox_2, comboBox);
+        QWidget::setTabOrder(comboBox, comboBox_3);
 
         retranslateUi(ScaleDock);
 
@@ -194,7 +205,7 @@ public:
         label_3->setText(QApplication::translate("ScaleDock", "Length (\302\265m):", 0));
         label_2->setText(QApplication::translate("ScaleDock", "Unit:", 0));
         label_4->setText(QApplication::translate("ScaleDock", "Style:", 0));
-        r->setText(QString());
+        left_->setText(QString());
         bottomleft->setText(QString());
         bottomright->setText(QString());
         topleft->setText(QString());
