@@ -22,7 +22,7 @@ ImageRaster::ImageRaster(QWidget *parent)
 	createActions();
 	createToolbars();
 	//for debugging purpose:
-	//initScene(QDir::homePath()+"/oreimo.jpg");
+	initScene(QDir::homePath()+"/oreimo.jpg");
 	markerIndex = 0;
 	modifier = 1.0;
 }
@@ -437,6 +437,8 @@ void ImageRaster::connectSignals() {
 	connect(prModel, &RulerModel::fontSizeChg, this, &ImageRaster::rFontSizeChg);
 	connect(prModel, &RulerModel::penWidthChg, this, &ImageRaster::rWidthChg);
 	connect(prDock->default_, &QPushButton::clicked, this, &ImageRaster::defaultText);
+
+	connect(scaleDock, &ScaleDock::checked_changed, this, &ImageRaster::addScale);
 }
 
 void ImageRaster::loadSettings() {
@@ -1080,7 +1082,202 @@ void ImageRaster::on_actionScale_triggered() {
 	scaleDock->show();
 }
 
-void ImageRaster::addScale(int s1, int s2) {
+void ImageRaster::addScale(int h, int v) {
 	//Collect data from scaleDock:
-	//ScaleType type = scaleDock->style_->currentIndex();
+	QString unit;
+	double mod;
+	rData scale;
+	scale.setMod((rData::Unit)scaleDock->unit->currentIndex());
+
+	ScaleType type = (ScaleType)scaleDock->style_->currentIndex();
+	int len = scaleDock->length->currentText().toInt();
+	mod = scale.mod();
+	unit = scale.unit();
+
+	//Generate line based on s1 and s2:
+	double xPixel = len/mod / profileModel->at(mapProfile->currentIndex()).x();
+	double yPixel = len/mod / profileModel->at(mapProfile->currentIndex()).y();
+
+	double wa = 0.1*scene->width();
+	double wm = 0.5*scene->width();
+	double wb = 0.9*scene->width();
+	double ha = 0.1*scene->height();
+	double hm = 0.5*scene->height();
+	double hb = 0.9*scene->height();
+
+	QLineF hTL = QLineF(QPointF(wa, ha), QPointF(wa+xPixel, ha));
+	QLineF hBL = QLineF(QPointF(wa, hb), QPointF(wa+xPixel, hb));
+	QLineF hT  = QLineF(QPointF(wm-0.5*xPixel, ha), QPointF(wm+0.5*xPixel, ha));
+	QLineF hC  = QLineF(QPointF(wm-0.5*xPixel, hm), QPointF(wm+0.5*xPixel, hm));
+	QLineF hB  = QLineF(QPointF(wm-0.5*xPixel, hb), QPointF(wm+0.5*xPixel, hb));
+	QLineF hTR = QLineF(QPointF(wb-xPixel, ha), QPointF(wb, ha));
+	QLineF hBR = QLineF(QPointF(wb-xPixel, hb), QPointF(wb, hb));
+	QLineF hL;	//!!!
+	QLineF hR;	//!!!
+
+	QLineF vTL = QLineF(QPointF(wa, ha), QPointF(wa, ha+yPixel));
+	QLineF vTR = QLineF(QPointF(wb, ha), QPointF(wb, ha+yPixel));
+	QLineF vL  = QLineF(QPointF(wa, hm-0.5*yPixel), QPointF(wa, hm+0.5*yPixel));
+	QLineF vC  = QLineF(QPointF(wm, hm-0.5*yPixel), QPointF(wm, hm+0.5*yPixel));
+	QLineF vR  = QLineF(QPointF(wb, hm-0.5*yPixel), QPointF(wb, hm+0.5*yPixel));
+	QLineF vBL = QLineF(QPointF(wa, hb-yPixel), QPointF(wa, hb));
+	QLineF vBR = QLineF(QPointF(wb, hb-yPixel), QPointF(wb, hb));
+	QLineF vT; //!!!
+	QLineF vB; //!!!
+
+	//Delete previous (if any) scale item:
+	QList<QGraphicsItem*> items;
+	for (auto p : scene->items()) {
+		if (BarScale::Type == p->type() || RulerScale::Type == p->type() || SimpleScale::Type == p->type()) {
+			items.append(p);
+		}
+	}
+	for (auto p : items)
+		delete p;
+
+	//A ***HUGE*** logic tree (I really despise this kind of things):
+	if (ScaleType::Bar == type) {
+		BarScale* sc, *sv;
+		if (0 == h)
+			sc = new BarScale(hTL);
+		else if (1 == h)
+			sc = new BarScale(hT);
+		else if (2 == h)
+			sc = new BarScale(hTR);
+		else if (3 == h)
+			sc = new BarScale(hL);
+		else if (4 == h) {
+			sc = new BarScale(hC);
+			sc->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+		}
+		else if (5 == h)
+			sc = new BarScale(hR);
+		else if (6 == h)
+			sc = new BarScale(hBL);
+		else if (7 == h)
+			sc = new BarScale(hB);
+		else if (8 == h)
+			sc = new BarScale(hBR);
+		sc->setText("0", QString().setNum(len) + unit);
+		scene->addItem(sc);
+
+		if (0 == v)
+			sv = new BarScale(vTL);
+		else if (1 == v)
+			sv = new BarScale(vT);
+		else if (2 == v)
+			sv = new BarScale(vTR);
+		else if (3 == v)
+			sv = new BarScale(vL);
+		else if (4 == v) {
+			sv = new BarScale(vC);
+			sv->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+		}
+		else if (5 == v)
+			sv = new BarScale(vR);
+		else if (6 == v)
+			sv = new BarScale(vBL);
+		else if (7 == v)
+			sv = new BarScale(vB);
+		else if (8 == v)
+			sv = new BarScale(vBR);
+		sv->setText("0", QString().setNum(len) + unit);
+		scene->addItem(sv);
+	}
+	else if (ScaleType::Line == type) {
+		RulerScale* sc, *sv;
+		if (0 == h)
+			sc = new RulerScale(hTL);
+		else if (1 == h)
+			sc = new RulerScale(hT);
+		else if (2 == h)
+			sc = new RulerScale(hTR);
+		else if (3 == h)
+			sc = new RulerScale(hL);
+		else if (4 == h) {
+			sc = new RulerScale(hC);
+			sc->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+		}
+		else if (5 == h)
+			sc = new RulerScale(hR);
+		else if (6 == h)
+			sc = new RulerScale(hBL);
+		else if (7 == h)
+			sc = new RulerScale(hB);
+		else if (8 == h)
+			sc = new RulerScale(hBR);
+		sc->setText("0", QString().setNum(len) + unit);
+		scene->addItem(sc);
+
+		if (0 == v)
+			sv = new RulerScale(vTL);
+		else if (1 == v)
+			sv = new RulerScale(vT);
+		else if (2 == v)
+			sv = new RulerScale(vTR);
+		else if (3 == v)
+			sv = new RulerScale(vL);
+		else if (4 == v) {
+			sv = new RulerScale(vC);
+			sv->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+		}
+		else if (5 == v)
+			sv = new RulerScale(vR);
+		else if (6 == v)
+			sv = new RulerScale(vBL);
+		else if (7 == v)
+			sv = new RulerScale(vB);
+		else if (8 == v)
+			sv = new RulerScale(vBR);
+		sv->setText("0", QString().setNum(len) + unit);
+		scene->addItem(sv);
+	}
+	else if (ScaleType::Simple == type) {
+		SimpleScale* sc, *sv;
+		if (0 == h)
+			sc = new SimpleScale(hTL);
+		else if (1 == h)
+			sc = new SimpleScale(hT);
+		else if (2 == h)
+			sc = new SimpleScale(hTR);
+		else if (3 == h)
+			sc = new SimpleScale(hL);
+		else if (4 == h) {
+			sc = new SimpleScale(hC);
+			sc->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+		}
+		else if (5 == h)
+			sc = new SimpleScale(hR);
+		else if (6 == h)
+			sc = new SimpleScale(hBL);
+		else if (7 == h)
+			sc = new SimpleScale(hB);
+		else if (8 == h)
+			sc = new SimpleScale(hBR);
+		sc->setText("0", QString().setNum(len) + unit);
+		scene->addItem(sc);
+
+		if (0 == v)
+			sv = new SimpleScale(vTL);
+		else if (1 == v)
+			sv = new SimpleScale(vT);
+		else if (2 == v)
+			sv = new SimpleScale(vTR);
+		else if (3 == v)
+			sv = new SimpleScale(vL);
+		else if (4 == v) {
+			sv = new SimpleScale(vC);
+			sv->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+		}
+		else if (5 == v)
+			sv = new SimpleScale(vR);
+		else if (6 == v)
+			sv = new SimpleScale(vBL);
+		else if (7 == v)
+			sv = new SimpleScale(vB);
+		else if (8 == v)
+			sv = new SimpleScale(vBR);
+		sv->setText("0", QString().setNum(len) + unit);
+		scene->addItem(sv);
+	}
 }

@@ -33,12 +33,9 @@ class ScaleDock :
 	friend class ImageRaster;
 public:
 	ScaleDock(QWidget* parent=0);
-	QList<QCheckBox*> checkBox() const {
-		return myCheckBox;
-	}
 	enum Checked {
-		TL, T, TR, R, C, L, BL, B, BR, None
-	};
+		TL, T, TR, L, C, R, BL, B, BR, None
+	} h, v;
 
 public slots:
 	void checkState();

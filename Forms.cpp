@@ -26,74 +26,59 @@ ScaleDock::ScaleDock(QWidget* parent) :
 	Ui::ScaleDock()
 {
 	Ui::ScaleDock::setupUi(this);
-	myCheckBox.append(topleft);
-	myCheckBox.append(top);
-	myCheckBox.append(topright);
-	myCheckBox.append(left_);
-	myCheckBox.append(center);
-	myCheckBox.append(right);
-	myCheckBox.append(bottomleft);
-	myCheckBox.append(bottom);
-	myCheckBox.append(bottomright);
-	for (auto cb : myCheckBox)
-		connect(cb, &QCheckBox::stateChanged, this, &ScaleDock::checkState);
+	h = BL;
+	v = BL;
+	connect(horizontalGroup, SIGNAL(buttonClicked(int)), this, SLOT(checkState()));
+	connect(verticalGroup, SIGNAL(buttonClicked(int)), this, SLOT(checkState()));
 }
 
 void ScaleDock::checkState() {
-	Checked c1 = None, c2 = None;
-	for (auto cb : myCheckBox) {
-		if (!cb->isChecked()) continue;
-		if (cb->objectName() == "topleft")
-			c1 = TL;
-		else if (cb->objectName() == "top")
-			c1 = T;
-		else if (cb->objectName() == "topright")
-			c1 = TR;
-		else if (cb->objectName() == "left_")
-			c1 = L;
-		else if (cb->objectName() == "center")
-			c1 = C;
-		else if (cb->objectName() == "right")
-			c1 = R;
-		else if (cb->objectName() == "bottomleft")
-			c1 = BL;
-		else if (cb->objectName() == "bottom")
-			c1 = B;
-		else if (cb->objectName() == "bottomright")
-			c1 = BR;
-	}
-	for (auto cb : myCheckBox) {
-		if (!cb->isChecked()) continue;
-		if (cb->objectName() == "topleft" && c1 != TL)
-			c2 = TL;
-		else if (cb->objectName() == "top" && c1 != T)
-			c2 = T;
-		else if (cb->objectName() == "topright" && c1 != TR)
-			c2 = TR;
-		else if (cb->objectName() == "left_" && c1 != L)
-			c2 = L;
-		else if (cb->objectName() == "center" && c1 != C)
-			c2 = C;
-		else if (cb->objectName() == "right" && c1 != R)
-			c2 = R;
-		else if (cb->objectName() == "bottomleft" && c1 != BL)
-			c2 = BL;
-		else if (cb->objectName() == "bottom" && c1 != B)
-			c2 = B;
-		else if (cb->objectName() == "bottomright" && c1 != BR)
-			c2 = BR;
-	}
-	if (None != c1 && None != c2) {
-		for (auto cb : myCheckBox) {
-			if (!cb->isChecked())
-				cb->setEnabled(false);
+	if (QRadioButton *b = qobject_cast<QRadioButton*>(qobject_cast<QButtonGroup*>(sender())->checkedButton())) {
+		QString n = b->objectName();
+		if (n.contains("_2")) {
+			//vertical:
+			if (n.contains("topleft"))
+				v = TL;
+			else if (n.contains("topright"))
+				v = TR;
+			else if (n.contains("center"))
+				v = C;
+			else if (n.contains("bottomleft"))
+				v = BL;
+			else if (n.contains("bottomright"))
+				v = BR;
+			else if (n.contains("left"))
+				v = L;
+			else if (n.contains("top"))
+				v = T;
+			else if (n.contains("right"))
+				v = R;
+			else if (n.contains("bottom"))
+				v = B;
+		}
+		else {
+			//horizontal:
+			if (n.contains("topleft"))
+				h = TL;
+			else if (n.contains("topright"))
+				h = TR;
+			else if (n.contains("center"))
+				h = C;
+			else if (n.contains("bottomleft"))
+				h = BL;
+			else if (n.contains("bottomright"))
+				h = BR;
+			else if (n.contains("left"))
+				h = L;
+			else if (n.contains("top"))
+				h = T;
+			else if (n.contains("right"))
+				h = R;
+			else if (n.contains("bottom"))
+				h = B;
 		}
 	}
-	else {
-		for (auto cb : myCheckBox)
-			cb->setEnabled(true);
-	}
-	emit checked_changed(c1, c2);
+	emit checked_changed(h, v);
 }
 
 BlendWizard::BlendWizard(QWidget* parent) :

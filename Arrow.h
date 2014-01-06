@@ -257,6 +257,10 @@ class LineItem:
 	QPen pen1, pen2;
 public:
 	LineItem(const QLineF& l, QGraphicsItem* parent=0);
+	~LineItem() { }
+
+	enum { Type = UserType + 13 };
+	int type() const { return Type; }
 
 	void setPen1(const QPen& p);
 	void setPen2(const QPen& p);
@@ -270,6 +274,7 @@ class SimpleScale:
 	QPen pen1, pen2;
 public:
 	SimpleScale(const QLineF& l, QGraphicsItem* parent=0);
+	~SimpleScale() { }
 
 	enum { Type = UserType + 10 };
 	int type() const { return Type; }
@@ -288,6 +293,7 @@ class BarScale:
 	QPen pen1, pen2;
 public:
 	BarScale(const QLineF& l, QGraphicsItem* parent=0);
+	~BarScale() { }
 
 	enum { Type = UserType + 11 };
 	int type() const { return Type; }
@@ -304,6 +310,7 @@ class RulerScale:
 	QList<LineItem*> ticks;
 public:
 	RulerScale(const QLineF& l, QGraphicsItem* parent=0);
+	~RulerScale() { }
 
 	enum { Type = UserType + 12 };
 	int type() const { return Type; }
