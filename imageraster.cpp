@@ -439,6 +439,7 @@ void ImageRaster::connectSignals() {
 	connect(prDock->default_, &QPushButton::clicked, this, &ImageRaster::defaultText);
 
 	connect(scaleDock, &ScaleDock::checked_changed, this, &ImageRaster::addScale);
+	connect(scaleDock->rem, &QPushButton::clicked, this, &ImageRaster::hideScale);
 }
 
 void ImageRaster::loadSettings() {
@@ -1125,15 +1126,7 @@ void ImageRaster::addScale(int h, int v) {
 	QLineF vT; //!!!
 	QLineF vB; //!!!
 
-	//Delete previous (if any) scale item:
-	QList<QGraphicsItem*> items;
-	for (auto p : scene->items()) {
-		if (BarScale::Type == p->type() || RulerScale::Type == p->type() || SimpleScale::Type == p->type()) {
-			items.append(p);
-		}
-	}
-	for (auto p : items)
-		delete p;
+	hideScale();
 
 	//A ***HUGE*** logic tree (I really despise this kind of things):
 	if (ScaleType::Bar == type) {
@@ -1281,3 +1274,16 @@ void ImageRaster::addScale(int h, int v) {
 		scene->addItem(sv);
 	}
 }
+
+void ImageRaster::hideScale() {
+	//Delete previous (if any) scale item:
+	QList<QGraphicsItem*> items;
+	for (auto p : scene->items()) {
+		if (BarScale::Type == p->type() || RulerScale::Type == p->type() || SimpleScale::Type == p->type()) {
+			items.append(p);
+		}
+	}
+	for (auto p : items)
+		delete p;
+}
+

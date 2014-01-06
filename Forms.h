@@ -39,6 +39,7 @@ public:
 
 public slots:
 	void checkState();
+	void sendState();
 signals:
 	void checked_changed(int, int);
 };

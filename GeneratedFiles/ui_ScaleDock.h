@@ -20,6 +20,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
@@ -32,6 +33,7 @@ class Ui_ScaleDock
 public:
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout;
+    QPushButton *rem;
     QLabel *label;
     QFrame *frame_5;
     QHBoxLayout *horizontalLayout_3;
@@ -79,11 +81,16 @@ public:
     {
         if (ScaleDock->objectName().isEmpty())
             ScaleDock->setObjectName(QStringLiteral("ScaleDock"));
-        ScaleDock->resize(230, 345);
+        ScaleDock->resize(230, 367);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
         verticalLayout = new QVBoxLayout(dockWidgetContents);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        rem = new QPushButton(dockWidgetContents);
+        rem->setObjectName(QStringLiteral("rem"));
+
+        verticalLayout->addWidget(rem);
+
         label = new QLabel(dockWidgetContents);
         label->setObjectName(QStringLiteral("label"));
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
@@ -340,6 +347,7 @@ public:
     void retranslateUi(QDockWidget *ScaleDock)
     {
         ScaleDock->setWindowTitle(QApplication::translate("ScaleDock", "Scale Editor", 0));
+        rem->setText(QApplication::translate("ScaleDock", "Hide Scale", 0));
         label->setText(QApplication::translate("ScaleDock", "Position (center=moveable):", 0));
         topleft->setText(QString());
         top->setText(QString());

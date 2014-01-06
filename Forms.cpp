@@ -30,6 +30,9 @@ ScaleDock::ScaleDock(QWidget* parent) :
 	v = BL;
 	connect(horizontalGroup, SIGNAL(buttonClicked(int)), this, SLOT(checkState()));
 	connect(verticalGroup, SIGNAL(buttonClicked(int)), this, SLOT(checkState()));
+	connect(length, SIGNAL(currentTextChanged(QString)), this, SLOT(sendState()));
+	connect(unit, SIGNAL(currentIndexChanged(int)), this, SLOT(sendState()));
+	connect(style_, SIGNAL(currentIndexChanged(int)), this, SLOT(sendState()));
 }
 
 void ScaleDock::checkState() {
@@ -78,6 +81,10 @@ void ScaleDock::checkState() {
 				h = B;
 		}
 	}
+	emit checked_changed(h, v);
+}
+
+void ScaleDock::sendState() {
 	emit checked_changed(h, v);
 }
 
