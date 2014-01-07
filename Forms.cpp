@@ -116,7 +116,7 @@ bool BlendWizard::validateCurrentPage() {
 	case StyleEdit:
 		break;
 	}
-	QWizard::validateCurrentPage();
+	return QWizard::validateCurrentPage();
 }
 
 void BlendWizard::on_browseButton_clicked() {

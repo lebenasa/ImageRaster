@@ -1295,18 +1295,9 @@ void ImageRaster::on_actionLegend_triggered() {
 		if (LegendItem::Type == i->type())
 			l.append(i);
 	}
-	if (l.size() == 0) {
-		QPointF origin = QPointF(0.1*scene->width(), 0.1*scene->height());
-		LegendItem* legend = new LegendItem(markerModel, origin);
-		scene->addItem(legend);
-	}
-	else {
-		for (auto i : l) {
-			QPointF origin = i->boundingRect().topLeft();
-			delete i;
-			LegendItem* legend = new LegendItem(markerModel, origin);
-			scene->addItem(legend);
-			legend->updateRect();
-		}
-	}
+	for (auto i : l)
+		delete i;
+	QPointF origin = QPointF(0.1*scene->width(), 0.1*scene->height());
+	LegendItem* legend = new LegendItem(markerModel, origin);
+	scene->addItem(legend);
 }

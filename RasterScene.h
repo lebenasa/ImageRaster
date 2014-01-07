@@ -32,3 +32,35 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
+class CropScene:
+	public QGraphicsScene
+{
+	Q_OBJECT
+	QPixmap myPix, cropPix;
+	QGraphicsRectItem *tmpRect;
+	QPointF p1, p2;
+	bool crop_ok;
+public:
+	CropScene(const QString& img, QObject* parent=0);
+	~CropScene(void) { }
+
+	QPixmap cropped() const { return cropPix; }
+protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); 
+};
+
+class BlendScene:
+	public QGraphicsScene
+{
+	Q_OBJECT
+	QPixmap thumbnail, base;
+public:
+	BlendScene(const QString& source, const QPixmap& thumb);
+
+protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); 
+};

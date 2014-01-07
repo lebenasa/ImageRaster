@@ -773,7 +773,6 @@ LegendItem::LegendItem(MarkerModel* m, const QPointF& origin, QGraphicsItem* par
 		QPen pen2 = QPen(QBrush(bgs.at(i)), 3);
 		mark->setPen(pen1);
 		bg->setPen(pen2);
-		mark->setFlag(QGraphicsItem::ItemIsSelectable);
 		marks.append(mark);
 	}
 	//Generate texts:
@@ -783,14 +782,14 @@ LegendItem::LegendItem(MarkerModel* m, const QPointF& origin, QGraphicsItem* par
 		font.setPointSize(12);
 		text->setFont(font);
 		QRectF base = marks.at(i)->boundingRect();
-		text->setPos(base.topRight() + QPointF(10, -text->boundingRect().height()*0.4));
-		text->setTextInteractionFlags(Qt::TextEditable);
-		text->setFlag(QGraphicsItem::ItemIsSelectable);
+		text->setPos(base.topRight() + QPointF(10, -text->boundingRect().height()*0.3));
+		text->setTextInteractionFlags(Qt::TextEditorInteraction);
 		texts.append(text);
 	}
 	//Wrap them all:
-	QPointF tl = marks.at(0)->boundingRect().topLeft();
-	QPointF br = texts.at(texts.size()-1)->boundingRect().bottomRight();
+	QPointF tl = origin;
+	QPointF br = origin + QPointF(10+10+10*11,
+		(marks.size()-1)*20+10);
 	QRectF bound = QRectF(tl + QPointF(-10, -10), br + QPointF(10, 10));
 	setRect(bound);
 
