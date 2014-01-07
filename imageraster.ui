@@ -95,6 +95,14 @@
     <string>A tool to create professional thumbnail in your scene.</string>
    </property>
   </action>
+  <action name="actionLegend">
+   <property name="text">
+    <string>Legend</string>
+   </property>
+   <property name="toolTip">
+    <string>Add or update existing legend based on markers data.</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

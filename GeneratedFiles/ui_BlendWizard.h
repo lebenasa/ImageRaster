@@ -40,7 +40,7 @@ public:
     QWizardPage *Blend2;
     QHBoxLayout *horizontalLayout;
     QLineEdit *browse;
-    QPushButton *browse_b;
+    QPushButton *browseButton;
     QWizardPage *Blend3;
     QGridLayout *gridLayout;
     QGraphicsView *view1;
@@ -68,7 +68,7 @@ public:
     {
         if (BlendWizard->objectName().isEmpty())
             BlendWizard->setObjectName(QStringLiteral("BlendWizard"));
-        BlendWizard->resize(623, 483);
+        BlendWizard->resize(623, 455);
         BlendWizard->setWizardStyle(QWizard::AeroStyle);
         Blend1 = new QWizardPage();
         Blend1->setObjectName(QStringLiteral("Blend1"));
@@ -84,10 +84,10 @@ public:
 
         horizontalLayout->addWidget(browse);
 
-        browse_b = new QPushButton(Blend2);
-        browse_b->setObjectName(QStringLiteral("browse_b"));
+        browseButton = new QPushButton(Blend2);
+        browseButton->setObjectName(QStringLiteral("browseButton"));
 
-        horizontalLayout->addWidget(browse_b);
+        horizontalLayout->addWidget(browseButton);
 
         BlendWizard->setPage(1, Blend2);
         Blend3 = new QWizardPage();
@@ -233,7 +233,7 @@ public:
         Blend1->setTitle(QApplication::translate("BlendWizard", "Blend Wizard", 0));
         Blend1->setSubTitle(QApplication::translate("BlendWizard", "Blend is ImageRaster utility to create professional looking thumbnail for your image. Press next to continue.", 0));
         Blend2->setTitle(QApplication::translate("BlendWizard", "Open Image for Thumbnail", 0));
-        browse_b->setText(QApplication::translate("BlendWizard", "Browse", 0));
+        browseButton->setText(QApplication::translate("BlendWizard", "Browse", 0));
         Blend3->setTitle(QApplication::translate("BlendWizard", "Crop", 0));
         Blend3->setSubTitle(QApplication::translate("BlendWizard", "Select part of the image that will be presented as thumbnail. Unnecessary part will be neglected. You can press right mouse button on image to reset selection.", 0));
         Blend4->setTitle(QApplication::translate("BlendWizard", "Style & Position Editor", 0));

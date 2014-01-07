@@ -120,7 +120,7 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(frame->sizePolicy().hasHeightForWidth());
         frame->setSizePolicy(sizePolicy1);
-        frame->setFrameShape(QFrame::StyledPanel);
+        frame->setFrameShape(QFrame::Box);
         frame->setFrameShadow(QFrame::Raised);
         horizontalLayout = new QHBoxLayout(frame);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -209,7 +209,7 @@ public:
         frame_4->setObjectName(QStringLiteral("frame_4"));
         sizePolicy1.setHeightForWidth(frame_4->sizePolicy().hasHeightForWidth());
         frame_4->setSizePolicy(sizePolicy1);
-        frame_4->setFrameShape(QFrame::StyledPanel);
+        frame_4->setFrameShape(QFrame::Box);
         frame_4->setFrameShadow(QFrame::Raised);
         horizontalLayout_2 = new QHBoxLayout(frame_4);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));

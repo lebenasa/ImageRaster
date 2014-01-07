@@ -259,7 +259,7 @@ public:
 	LineItem(const QLineF& l, QGraphicsItem* parent=0);
 	~LineItem() { }
 
-	enum { Type = UserType + 13 };
+	enum { Type = UserType + 10 };
 	int type() const { return Type; }
 
 	void setPen1(const QPen& p);
@@ -276,7 +276,7 @@ public:
 	SimpleScale(const QLineF& l, QGraphicsItem* parent=0);
 	~SimpleScale() { }
 
-	enum { Type = UserType + 10 };
+	enum { Type = UserType + 11 };
 	int type() const { return Type; }
 
 	void setPen1(const QPen& p);
@@ -295,7 +295,7 @@ public:
 	BarScale(const QLineF& l, QGraphicsItem* parent=0);
 	~BarScale() { }
 
-	enum { Type = UserType + 11 };
+	enum { Type = UserType + 12 };
 	int type() const { return Type; }
 
 	void setPen1(const QPen& p);
@@ -312,9 +312,27 @@ public:
 	RulerScale(const QLineF& l, QGraphicsItem* parent=0);
 	~RulerScale() { }
 
-	enum { Type = UserType + 12 };
+	enum { Type = UserType + 13 };
 	int type() const { return Type; }
 
 	void setPen1(const QPen& p);
 	void setPen2(const QPen& p);
+};
+
+class MarkerModel;
+class LegendItem:
+	public QGraphicsRectItem
+{
+	QList<QGraphicsEllipseItem*> marks;
+	QList<QGraphicsTextItem*> texts;
+	MarkerModel* model;
+	QRectF generateRect() const;
+public:
+	LegendItem(MarkerModel* m, const QPointF& origin = QPointF(0, 0), QGraphicsItem* parent=0);
+	~LegendItem() {}
+
+	enum { Type = UserType + 14 };
+	int type() const { return Type; }
+
+	void updateRect();
 };

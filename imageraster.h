@@ -199,6 +199,8 @@ public slots:
 	void on_actionScale_triggered();
 	void addScale(int, int);
 	void hideScale();
+
+	void on_actionLegend_triggered();
 };
 
 #endif // IMAGERASTER_H

@@ -30,6 +30,7 @@ class Ui_ImageRasterClass
 public:
     QAction *actionScale;
     QAction *actionBlend;
+    QAction *actionLegend;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QGraphicsView *graphicsView;
@@ -53,6 +54,8 @@ public:
         actionScale->setObjectName(QStringLiteral("actionScale"));
         actionBlend = new QAction(ImageRasterClass);
         actionBlend->setObjectName(QStringLiteral("actionBlend"));
+        actionLegend = new QAction(ImageRasterClass);
+        actionLegend->setObjectName(QStringLiteral("actionLegend"));
         centralWidget = new QWidget(ImageRasterClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -105,6 +108,10 @@ public:
         actionBlend->setText(QApplication::translate("ImageRasterClass", "Blend", 0));
 #ifndef QT_NO_TOOLTIP
         actionBlend->setToolTip(QApplication::translate("ImageRasterClass", "A tool to create professional thumbnail in your scene.", 0));
+#endif // QT_NO_TOOLTIP
+        actionLegend->setText(QApplication::translate("ImageRasterClass", "Legend", 0));
+#ifndef QT_NO_TOOLTIP
+        actionLegend->setToolTip(QApplication::translate("ImageRasterClass", "Add or update existing legend based on markers data.", 0));
 #endif // QT_NO_TOOLTIP
         menuFile->setTitle(QApplication::translate("ImageRasterClass", "File", 0));
         menuView->setTitle(QApplication::translate("ImageRasterClass", "View", 0));

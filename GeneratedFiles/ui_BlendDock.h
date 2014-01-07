@@ -50,7 +50,7 @@ public:
     {
         if (BlendDock->objectName().isEmpty())
             BlendDock->setObjectName(QStringLiteral("BlendDock"));
-        BlendDock->resize(233, 323);
+        BlendDock->resize(233, 286);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
         horizontalLayout = new QHBoxLayout(dockWidgetContents);

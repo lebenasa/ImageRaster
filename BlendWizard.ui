@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>623</width>
-    <height>483</height>
+    <height>455</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
      <widget class="QLineEdit" name="browse"/>
     </item>
     <item>
-     <widget class="QPushButton" name="browse_b">
+     <widget class="QPushButton" name="browseButton">
       <property name="text">
        <string>Browse</string>
       </property>

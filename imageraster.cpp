@@ -91,6 +91,7 @@ void ImageRaster::createActions() {
 
 	ui.menuTools->addAction(ui.actionScale);
 	ui.menuTools->addAction(ui.actionBlend);
+	ui.menuTools->addAction(ui.actionLegend);
 }
 
 void ImageRaster::createToolbars() {
@@ -1287,3 +1288,25 @@ void ImageRaster::hideScale() {
 		delete p;
 }
 
+void ImageRaster::on_actionLegend_triggered() {
+	//Delete existing legend (if exist):
+	QList<QGraphicsItem*> l;
+	for (auto i : scene->items()) {
+		if (LegendItem::Type == i->type())
+			l.append(i);
+	}
+	if (l.size() == 0) {
+		QPointF origin = QPointF(0.1*scene->width(), 0.1*scene->height());
+		LegendItem* legend = new LegendItem(markerModel, origin);
+		scene->addItem(legend);
+	}
+	else {
+		for (auto i : l) {
+			QPointF origin = i->boundingRect().topLeft();
+			delete i;
+			LegendItem* legend = new LegendItem(markerModel, origin);
+			scene->addItem(legend);
+			legend->updateRect();
+		}
+	}
+}

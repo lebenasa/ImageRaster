@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Arrow.h"
+#include "ModelView.h"
 #include <math.h>
 
 //Class Arrow
@@ -744,4 +745,67 @@ void RulerScale::setPen2(const QPen& p) {
 	SimpleScale::setPen2(p);
 	for (auto tick : ticks)
 		tick->setPen2(p);
+}
+
+//class LegendItem
+LegendItem::LegendItem(MarkerModel* m, const QPointF& origin, QGraphicsItem* parent) :
+	QGraphicsRectItem(QRectF(origin, QSizeF(10, 10)), parent)
+{
+	model = m;
+	QList<QString> labels;
+	QList<QColor> colors, bgs;
+	//Get data from model:
+	for (int i=0; i<model->rowCount(); ++i) {
+		QString label = model->at(i)->label() + "\t: " + QString().setNum(model->at(i)->count());
+		labels.append(label);
+		QColor color = model->at(i)->color1();
+		colors.append(color);
+		QColor bg = model->at(i)->color2();
+		bgs.append(bg);
+	}
+	//Generate marks:
+	for (int i=0; i<colors.size(); ++i) {
+		QRectF r = QRectF(origin + QPointF(0, i*20), QSizeF(10, 10));
+		QGraphicsEllipseItem* mark = new QGraphicsEllipseItem(r, this);
+		QGraphicsEllipseItem* bg = new QGraphicsEllipseItem(r, mark);
+		bg->setFlag(QGraphicsItem::ItemStacksBehindParent);
+		QPen pen1 = QPen(QBrush(colors.at(i)), 2);
+		QPen pen2 = QPen(QBrush(bgs.at(i)), 3);
+		mark->setPen(pen1);
+		bg->setPen(pen2);
+		mark->setFlag(QGraphicsItem::ItemIsSelectable);
+		marks.append(mark);
+	}
+	//Generate texts:
+	for (int i=0; i<labels.size(); ++i) {
+		QGraphicsTextItem* text = new QGraphicsTextItem(labels.at(i), this);
+		QFont font = text->font();
+		font.setPointSize(12);
+		text->setFont(font);
+		QRectF base = marks.at(i)->boundingRect();
+		text->setPos(base.topRight() + QPointF(10, -text->boundingRect().height()*0.4));
+		text->setTextInteractionFlags(Qt::TextEditable);
+		text->setFlag(QGraphicsItem::ItemIsSelectable);
+		texts.append(text);
+	}
+	//Wrap them all:
+	QPointF tl = marks.at(0)->boundingRect().topLeft();
+	QPointF br = texts.at(texts.size()-1)->boundingRect().bottomRight();
+	QRectF bound = QRectF(tl + QPointF(-10, -10), br + QPointF(10, 10));
+	setRect(bound);
+
+	//Default format:
+	setPen(QPen(QBrush(Qt::black), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+	setBrush(QBrush(Qt::white));
+	setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+}
+
+QRectF LegendItem::generateRect() const {
+	QPointF tl = marks.at(0)->boundingRect().topLeft();
+	QPointF br = texts.at(texts.size()-1)->boundingRect().bottomRight();
+	return QRectF(tl + QPointF(-10, -10), br + QPointF(10, 10));
+}
+
+void LegendItem::updateRect() {
+	setRect(generateRect());
 }
