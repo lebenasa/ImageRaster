@@ -441,8 +441,7 @@ void StateManager::cmrRulerCentertoCenter(QGraphicsSceneMouseEvent *event, Mouse
 			click = 0;
 			delete tmpCircle;
 			hasTmpItem = false;
-			Circle2Ruler* ruler = new Circle2Ruler(rectFrom3Point(p1, p2, p3), rectFrom3Point(p4, p5, p6));
-			emit addTC(ruler);
+			emit addTC(rectFrom3Point(p1, p2, p3), rectFrom3Point(p4, p5, p6));
 		}
 	}
 	else if (MouseState::Move == ms) {

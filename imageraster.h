@@ -187,7 +187,7 @@ public slots:
 	void addCR(const QRectF&);
 	void updateCR();
 
-	void addTC(Circle2Ruler*);
+	void addTC(const QRectF&, const QRectF&);
 	void updateTC();
 
 	void addPR(PolyRuler*);

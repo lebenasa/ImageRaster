@@ -874,7 +874,7 @@ void ImageRaster::addCR(const QRectF& r) {
 	//Recalculate circle using calibration data:
 	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
 	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
-	QPointF center = r.topLeft() + QPointF(r.width()/2, r.height()/2);
+	QPointF center = r.center();
 	double radius = r.width()/2;
 	double r1 = radius * modifierX;
 	double r2 = radius * modifierY;
@@ -915,18 +915,39 @@ void ImageRaster::updateCR() {
 	}
 }
 
-void ImageRaster::addTC(Circle2Ruler* r) {
+void ImageRaster::addTC(const QRectF& r1, const QRectF& r2) {
+	//Recalculate circle using calibration data:
+	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
+	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
+
+	QPointF center1 = r1.center();
+	double radius1 = r1.width()/2;
+	double may1 = radius1 * modifierX;
+	double min1 = radius1 * modifierY;
+	QPointF TL1 = QPointF(center1.x()-may1, center1.y()-min1);
+	QRectF circle1 = QRectF(TL1, QSizeF(may1, min1));
+
+	QPointF center2 = r2.center();
+	double radius2 = r2.width()/2;
+	double may2 = radius2 * modifierX;
+	double min2 = radius2 * modifierY;
+	QPointF TL2 = QPointF(center2.x()-may2, center2.y()-min2);
+	QRectF circle2 = QRectF(TL2, QSizeF(may2, min2));
+
+	Circle2Ruler *ruler = new Circle2Ruler(circle1, circle2);
+	scene->addItem(ruler);
+
 	//Apply Format:
 	QPen pen1 = QPen(tcModel->color1());
 	pen1.setWidth(tcModel->penWidth());
 	QPen pen2 = QPen(tcModel->color2());
 	QFont f = tcModel->font();
 	f.setPixelSize(tcModel->fontSize());
-	r->setPen1(pen1);
-	r->setPen2(pen2);
-	r->setFont(f);
+	ruler->setPen1(pen1);
+	ruler->setPen2(pen2);
+	ruler->setFont(f);
 	//Register to model via QUndoCommand:
-	AddCircle2Ruler* add = new AddCircle2Ruler(r, tcModel, this);
+	AddCircle2Ruler* add = new AddCircle2Ruler(ruler, tcModel, this);
 	undoStack->push(add);
 	mapTC->toLast();
 }

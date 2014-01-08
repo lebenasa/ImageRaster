@@ -47,7 +47,7 @@ signals:
 	void addLR(LineRuler*);
 	void addRR(RectRuler*);
 	void addCR(const QRectF&);
-	void addTC(Circle2Ruler*);
+	void addTC(const QRectF&, const QRectF&);
 	void addPR(PolyRuler*);
 	void sendCalibration(int);
 
