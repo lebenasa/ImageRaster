@@ -184,7 +184,7 @@ public slots:
 	void addRR(RectRuler*);
 	void updateRR();
 
-	void addCR(CircleRuler*);
+	void addCR(const QRectF&);
 	void updateCR();
 
 	void addTC(Circle2Ruler*);

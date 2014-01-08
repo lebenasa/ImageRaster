@@ -381,8 +381,7 @@ void StateManager::cmrRulerCircle(QGraphicsSceneMouseEvent *event, MouseState ms
 			click = 0;
 			delete tmpCircle;
 			hasTmpItem = false;
-			CircleRuler* ruler = new CircleRuler(rectFrom3Point(p1, p2, p3));
-			emit addCR(ruler);
+			emit addCR(rectFrom3Point(p1, p2, p3));
 		}
 	}
 	else if (MouseState::Move == ms) {

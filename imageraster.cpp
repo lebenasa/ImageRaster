@@ -870,18 +870,31 @@ void ImageRaster::updateRR() {
 	}
 }
 
-void ImageRaster::addCR(CircleRuler* r) {
+void ImageRaster::addCR(const QRectF& r) {
+	//Recalculate circle using calibration data:
+	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
+	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
+	QPointF center = r.topLeft() + QPointF(r.width()/2, r.height()/2);
+	double radius = r.width()/2;
+	double r1 = radius * modifierX;
+	double r2 = radius * modifierY;
+	QPointF TL = QPointF(center.x()-r1, center.y()-r2);
+	QRectF circle = QRectF(TL, QSizeF(r1, r2));
+	CircleRuler* ruler = new CircleRuler(circle);
+	scene->addItem(ruler);
+	ruler->setRadius(radius);
+
 	//Apply Format:
 	QPen pen1 = QPen(crModel->color1());
 	pen1.setWidth(crModel->penWidth());
 	QPen pen2 = QPen(crModel->color2());
 	QFont f = crModel->font();
 	f.setPixelSize(crModel->fontSize());
-	r->setPen1(pen1);
-	r->setPen2(pen2);
-	r->setFont(f);
+	ruler->setPen1(pen1);
+	ruler->setPen2(pen2);
+	ruler->setFont(f);
 	//Register to model via QUndoCommand:
-	AddCircleRuler* add = new AddCircleRuler(r, crModel, this);
+	AddCircleRuler* add = new AddCircleRuler(ruler, crModel, this);
 	undoStack->push(add);
 	mapCR->toLast();
 }
@@ -892,7 +905,7 @@ void ImageRaster::updateCR() {
 	for (int i=0; i<crModel->rowCount(); ++i) {
 		if (auto b = (CircleRuler*)crModel->at(i)) {
 			QRectF r = b->rect();
-			double r_radius = modifierX * r.width()/2;
+			double r_radius = b->radius();
 			if (b->radius() == r_radius && b->mod() == modifier)
 				continue;
 			b->setMod(modifier);
