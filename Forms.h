@@ -53,24 +53,32 @@ class BlendWizard:
 	Q_OBJECT
 	QString thumbFile;
 	CropScene* crop;
+	QPixmap crop_pix;
 	BlendScene* blend;
 	QString base;
+	QFont myFont;
 public:
 	BlendWizard(const QString& source, QWidget* parent=0);
 	enum PageStatus {
 		Intro, OpenImg, Crop, StyleEdit
 	} page_status;
+	enum StyleType {
+		Circle, Box, Ellipse, Rectangle
+	};
 	bool validateCurrentPage();
+	void applyFormat();
 
 public slots:
 	void on_browseButton_clicked();
-	void on_style_currentIndexChanged(int);
+	void on_Style_currentIndexChanged(int);
 	void on_color1_currentIndexChanged();
 	void on_color2_currentIndexChanged();
 	void on_lineweight_valueChanged(int);
 	void on_thumbSize_valueChanged(int);
 	void on_anchorSize_valueChanged(int);
 	void on_text_textChanged();
+	void on_Font_currentFontChanged(const QFont & font);
+	void on_fontSize_currentIndexChanged();
 };
 
 class BlendDock:

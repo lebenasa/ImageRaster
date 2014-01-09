@@ -206,6 +206,8 @@ public slots:
 	void hideScale();
 
 	void on_actionLegend_triggered();
+
+	//void on_actionBlend_triggered();
 };
 
 #endif // IMAGERASTER_H

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "RasterScene.h"
 #include "StateManager.h"
+#include "Arrow.h"
 
 RasterScene::RasterScene(QObject *parent)
 	: QGraphicsScene(parent)
@@ -112,6 +113,110 @@ BlendScene::BlendScene(const QString& source, const QPixmap& thumb, QObject* par
 {
 	thumbnail = thumb;
 	base = QPixmap(source);
+	QGraphicsPixmapItem* bg = addPixmap(base);
+	setSceneRect(bg->boundingRect());
+	lastThumbPos = sceneRect().center() + QPointF(128, 128);
+	lastAnchorPos = sceneRect().center();
+	myText = new QGraphicsSimpleTextItem();
+	myText->setPos(lastThumbPos + QPointF(0, 138));
+	myText->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+}
+
+RectItem* BlendScene::addRectItem(int width, int height) {
+	RectItem* frame_anchor = new RectItem(QRectF(lastAnchorPos, QSizeF(width, height)));
+	frame_anchor->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(frame_anchor);
+	return frame_anchor;
+}
+
+CircleItem* BlendScene::addCircleItem(int width, int height) {
+	CircleItem* frame_anchor = new CircleItem(QRectF(lastAnchorPos, QSizeF(width, height)));
+	frame_anchor->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(frame_anchor);
+	return frame_anchor;
+}
+
+ClipRect* BlendScene::addClipRect(int size) {
+	ClipRect* frame_thumb = new ClipRect(thumbnail, QRectF(lastThumbPos, QSizeF(size, size)));
+	frame_thumb->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(frame_thumb);
+	return frame_thumb;
+}
+
+ClipCircle* BlendScene::addClipCircle(int size) {
+	ClipCircle* frame_thumb = new ClipCircle(thumbnail, QRectF(lastThumbPos, QSizeF(size, size)));
+	frame_thumb->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(frame_thumb);
+	return frame_thumb;
+}
+
+FitRect* BlendScene::addFitRect(int width, int height) {
+	FitRect* frame_thumb = new FitRect(thumbnail, QRectF(lastThumbPos, QSizeF(width, height)));
+	frame_thumb->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(frame_thumb);
+	return frame_thumb;
+}
+
+FitCircle* BlendScene::addFitCircle(int width , int height) {
+	FitCircle* frame_thumb = new FitCircle(thumbnail, QRectF(lastThumbPos, QSizeF(width, height)));
+	frame_thumb->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(frame_thumb);
+	return frame_thumb;
+}
+
+void BlendScene::removeAnchor() {
+	QList<QGraphicsItem*> pool;
+	for (auto item : items()) {
+		if (RectItem::Type == item->type() || CircleItem::Type == item->type()) {
+			lastAnchorPos = item->boundingRect().topLeft();
+			pool.append(item);
+		}
+	}
+	for (auto i : pool)
+		delete i;
+}
+
+void BlendScene::removeThumb() {
+	QList<QGraphicsItem*> pool;
+	for (auto item : items()) {
+		if (ClipRect::Type == item->type() || ClipCircle::Type == item->type() ||
+			FitRect::Type == item->type() || FitCircle::Type == item->type()) {
+			lastThumbPos = item->boundingRect().topLeft();
+			pool.append(item);
+		}
+	}
+	for (auto i : pool)
+		delete i;
+}
+
+void BlendScene::setPen1(const QPen& p) {
+	for (auto item : items()) {
+		if (auto i = qgraphicsitem_cast<RectItem*>(item)) {
+			i->setPen1(p);
+		}
+		else if (auto i = qgraphicsitem_cast<CircleItem*>(item)) {
+			i->setPen1(p);
+		}
+	}
+}
+
+void BlendScene::setPen2(const QPen& p) {
+	for (auto item : items()) {
+		if (auto i = qgraphicsitem_cast<RectItem*>(item)) {
+			i->setPen2(p);
+		}
+		else if (auto i = qgraphicsitem_cast<CircleItem*>(item)) {
+			i->setPen2(p);
+		}
+	}
+}
+
+void BlendScene::setFont(const QFont& f) {
+	myText->setFont(f);
+}
+
+void BlendScene::setText(const QString& t) {
+	myText->setText(t);
 }
 
 void BlendScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {

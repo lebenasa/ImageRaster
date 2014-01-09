@@ -51,16 +51,42 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); 
 };
 
+class RectItem;
+class CircleItem;
+class ClipRect;
+class ClipCircle;
+class FitRect;
+class FitCircle;
 class BlendScene:
 	public QGraphicsScene
 {
-	Q_OBJECT
 	QPixmap thumbnail, base;
+	QPointF lastAnchorPos, lastThumbPos;
+	QGraphicsSimpleTextItem *myText;
 public:
 	BlendScene(const QString& source, const QPixmap& thumb, QObject* parent=0);
+
+	RectItem* addRectItem(int width, int height);
+	CircleItem* addCircleItem(int width, int height);
+	ClipRect* addClipRect(int size);
+	ClipCircle* addClipCircle(int size);
+	FitRect* addFitRect(int width, int height);
+	FitCircle* addFitCircle(int width , int height);
+
+	QPointF lastAnchorTL() const { return lastAnchorPos; }
+	QPointF lastThumbTL() const { return lastThumbPos;  }
+	QPointF lastTextTL() const { return myText->pos(); }
+
+	void removeAnchor();
+	void removeThumb();
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+	void setFont(const QFont& f);
+	void setText(const QString&);
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); 
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };

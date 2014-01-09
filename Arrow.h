@@ -279,6 +279,7 @@ public:
 	void setPen2(const QPen& p);
 };
 
+//Scale:
 class SimpleScale:
 	public LineItem
 {
@@ -332,6 +333,7 @@ public:
 	void setPen2(const QPen& p);
 };
 
+//Legend:
 class MarkerModel;
 class LegendItem:
 	public QGraphicsRectItem
@@ -350,6 +352,7 @@ public:
 	void updateRect();
 };
 
+//Blend:
 class RectItem:
 	public QGraphicsRectItem,
 	public Format
@@ -419,6 +422,42 @@ public:
 	ClipRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 
 	enum { Type = UserType + 18 };
+	int type() const { return Type; }
+
+	void setPix(const QPixmap& pix);
+};
+
+class ClipCircle:
+	public FrameCircle
+{
+public:
+	ClipCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 19 };
+	int type() const { return Type; }
+
+	void setPix(const QPixmap& pix);
+};
+
+class FitRect:
+	public FrameRect
+{
+public:
+	FitRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 20 };
+	int type() const { return Type; }
+
+	void setPix(const QPixmap& pix);
+};
+
+class FitCircle:
+	public FrameCircle
+{
+public:
+	FitCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 21 };
 	int type() const { return Type; }
 
 	void setPix(const QPixmap& pix);

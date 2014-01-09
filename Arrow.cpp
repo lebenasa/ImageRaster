@@ -916,13 +916,78 @@ void FrameCircle::setPix(const QPixmap& pix) {
 
 //class ClipRect
 ClipRect::ClipRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
-	FrameRect(pix, r, parent)
+	FrameRect(pix, QRectF(r.topLeft(), QSizeF(r.width(), r.width())), parent)
 {
 }
 
 void ClipRect::setPix(const QPixmap& pix) {
 	FrameRect::setPix(pix);
-	QPixmap p = pix;
-	//Scale pix:
-	QPixmap clipped = p.scaled(rect().width(), rect().height(), Qt::KeepAspectRatioByExpanding);
+	QImage img = pix.toImage();
+	//Crop middle part of the image to form square image:
+	int w = img.width();
+	int h = img.height();
+	int s = (w > h) ? h : w;
+	QPoint offset = (w > h) ? QPoint((w-s)/2, 0) : QPoint(0, (h-s)/2);
+	QRect r = QRect(offset, QSize(s, s));
+	QImage cropped = img.copy(r);
+	//Scale it, and set it as brush:
+	QImage scaled = cropped.scaled(rect().size().toSize(),
+		Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QBrush pix_brush = QBrush(scaled);
+	setBrush(pix_brush);
+}
+
+//class ClipCircle
+ClipCircle::ClipCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
+	FrameCircle(pix, QRectF(r.topLeft(), QSizeF(r.width(), r.width())), parent)
+{
+}
+
+void ClipCircle::setPix(const QPixmap& pix) {
+	FrameCircle::setPix(pix);
+	QImage img = pix.toImage();
+	//Crop middle part of the image to form square image:
+	int w = img.width();
+	int h = img.height();
+	int s = (w > h) ? h : w;
+	QPoint offset = (w > h) ? QPoint((w-s)/2, 0) : QPoint(0, (h-s)/2);
+	QRect r = QRect(offset, QSize(s, s));
+	QImage cropped = img.copy(r);
+	//Scale it, and set it as brush:
+	QImage scaled = cropped.scaled(rect().size().toSize(),
+		Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QBrush pix_brush = QBrush(scaled);
+	setBrush(pix_brush);
+}
+
+//class ClipRect
+FitRect::FitRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
+	FrameRect(pix, r, parent)
+{
+}
+
+void FitRect::setPix(const QPixmap& pix) {
+	FrameRect::setPix(pix);
+	QImage img = pix.toImage();
+	//Scale it (strecthed), and set it as brush:
+	QImage scaled = img.scaled(rect().size().toSize(),
+		Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	QBrush pix_brush = QBrush(scaled);
+	setBrush(pix_brush);
+}
+
+//class FitCircle
+FitCircle::FitCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
+	FrameCircle(pix, r, parent)
+{
+}
+
+void FitCircle::setPix(const QPixmap& pix) {
+	FrameCircle::setPix(pix);
+	QImage img = pix.toImage();
+	//Scale it (strecthed), and set it as brush:
+	QImage scaled = img.scaled(rect().size().toSize(),
+		Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	QBrush pix_brush = QBrush(scaled);
+	setBrush(pix_brush);
 }
