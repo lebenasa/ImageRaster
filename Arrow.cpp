@@ -464,6 +464,25 @@ void CircleRuler::setPen2(const QPen& p) {
 	bgR->setPen(pen);
 }
 
+void CircleRuler::setOriginal(const QPointF& pa, const QPointF& pb, const QPointF& pc) {
+	p1 = pa;
+	p2 = pb;
+	p3 = pc;
+}
+
+QList<QPointF> CircleRuler::original() const {
+	QList<QPointF> origin;
+	origin.append(p1);
+	origin.append(p2);
+	origin.append(p3);
+	return origin;
+}
+
+void CircleRuler::setRect(const QRectF& r) {
+	myRect->setRect(r);
+	bgR->setRect(r);
+}
+
 //class Circle2Ruler
 Circle2Ruler::Circle2Ruler(const QRectF& r1, const QRectF& r2, Container* parent):
 	LineRuler(lineFrom2Rect(r1, r2))
@@ -479,9 +498,7 @@ Circle2Ruler::Circle2Ruler(const QRectF& r1, const QRectF& r2, Container* parent
 }
 
 QLineF Circle2Ruler::lineFrom2Rect(const QRectF& r1, const QRectF& r2) {
-	QPointF p1 = r1.topLeft() + QPointF(r1.width()/2, r1.height()/2);
-	QPointF p2 = r2.topLeft() + QPointF(r2.width()/2, r2.height()/2);
-	return QLineF(p1, p2);
+	return QLineF(r1.center(), r2.center());
 }
 
 QRectF Circle2Ruler::boundingRect() const {
@@ -508,6 +525,28 @@ void Circle2Ruler::setPen2(const QPen& p) {
 	pen.setWidth(pen1().width()+1);
 	bgR1->setPen(pen);
 	bgR2->setPen(pen);
+}
+
+void Circle2Ruler::setOriginal(const QPointF& pa, const QPointF& pb, const QPointF& pc,
+	const QPointF& pd, const QPointF& pe, const QPointF& pf) {
+	origin_points.clear();
+	origin_points.append(pa);
+	origin_points.append(pb);
+	origin_points.append(pc);
+	origin_points.append(pd);
+	origin_points.append(pe);
+	origin_points.append(pf);
+}
+
+QList<QPointF> Circle2Ruler::original() const {
+	return origin_points;
+}
+
+void Circle2Ruler::setRect(const QRectF& r1, const QRectF& r2) {
+	myRect1->setRect(r1);
+	bgR1->setRect(r1);
+	myRect2->setRect(r2);
+	bgR2->setRect(r2);
 }
 
 //class PolyRuler
@@ -807,4 +846,83 @@ QRectF LegendItem::generateRect() const {
 
 void LegendItem::updateRect() {
 	setRect(generateRect());
+}
+
+//class RectItem
+RectItem::RectItem(const QRectF& r, QGraphicsItem* parent):
+	QGraphicsRectItem(r, parent), Format()
+{
+	bg = new QGraphicsRectItem(r, this);
+	bg->setFlag(QGraphicsItem::ItemStacksBehindParent);
+
+	setPen1(QPen(Qt::black, 2));
+	setPen2(QPen(Qt::white));
+}
+
+void RectItem::setPen1(const QPen& p) {
+	QGraphicsRectItem::setPen(p);
+	setPen2(pen2());
+}
+
+void RectItem::setPen2(const QPen& p) {
+	QPen pen = p;
+	pen.setWidth(pen1().width()+1);
+	bg->setPen(pen);
+}
+
+//class CircleItem
+CircleItem::CircleItem(const QRectF& r, QGraphicsItem* parent):
+	QGraphicsEllipseItem(r, parent), Format()
+{
+	bg = new QGraphicsEllipseItem(r, this);
+	bg->setFlag(QGraphicsItem::ItemStacksBehindParent);
+
+	setPen1(QPen(Qt::black, 2));
+	setPen2(QPen(Qt::white));
+}
+
+void CircleItem::setPen1(const QPen& p) {
+	QGraphicsEllipseItem::setPen(p);
+	setPen2(pen2());
+}
+
+void CircleItem::setPen2(const QPen& p) {
+	QPen pen = p;
+	pen.setWidth(pen1().width()+1);
+	bg->setPen(pen);
+}
+
+//class FrameRect
+FrameRect::FrameRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
+	RectItem(r, parent)
+{
+	setPix(pix);
+}
+
+void FrameRect::setPix(const QPixmap& pix) {
+	myPix = pix;
+}
+
+//class FrameCircle
+FrameCircle::FrameCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
+	CircleItem(r, parent)
+{
+	setPix(pix);
+}
+
+void FrameCircle::setPix(const QPixmap& pix) {
+	myPix = pix;
+}
+
+//class ClipRect
+ClipRect::ClipRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
+	FrameRect(pix, r, parent)
+{
+}
+
+void ClipRect::setPix(const QPixmap& pix) {
+	FrameRect::setPix(pix);
+	QPixmap p = pix;
+	//Scale pix:
+	QPixmap clipped = p.scaled(rect().width(), rect().height(), Qt::KeepAspectRatioByExpanding);
 }

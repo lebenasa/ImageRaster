@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QFontComboBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGraphicsView>
@@ -45,7 +46,7 @@ public:
     QGridLayout *gridLayout;
     QGraphicsView *view1;
     QWizardPage *Blend4;
-    QHBoxLayout *horizontalLayout_2;
+    QHBoxLayout *horizontalLayout_3;
     QFrame *frame;
     QFormLayout *formLayout;
     QLabel *label;
@@ -62,13 +63,17 @@ public:
     QSpinBox *lineweight;
     QLabel *label_7;
     QPlainTextEdit *text;
+    QFrame *frame_2;
+    QHBoxLayout *horizontalLayout_2;
+    QFontComboBox *font;
+    QComboBox *fontSize;
     QGraphicsView *view2;
 
     void setupUi(QWizard *BlendWizard)
     {
         if (BlendWizard->objectName().isEmpty())
             BlendWizard->setObjectName(QStringLiteral("BlendWizard"));
-        BlendWizard->resize(623, 455);
+        BlendWizard->resize(623, 490);
         BlendWizard->setWizardStyle(QWizard::AeroStyle);
         Blend1 = new QWizardPage();
         Blend1->setObjectName(QStringLiteral("Blend1"));
@@ -103,8 +108,8 @@ public:
         BlendWizard->setPage(2, Blend3);
         Blend4 = new QWizardPage();
         Blend4->setObjectName(QStringLiteral("Blend4"));
-        horizontalLayout_2 = new QHBoxLayout(Blend4);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_3 = new QHBoxLayout(Blend4);
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         frame = new QFrame(Blend4);
         frame->setObjectName(QStringLiteral("frame"));
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -203,14 +208,36 @@ public:
 
         formLayout->setWidget(7, QFormLayout::SpanningRole, text);
 
+        frame_2 = new QFrame(frame);
+        frame_2->setObjectName(QStringLiteral("frame_2"));
+        frame_2->setMaximumSize(QSize(200, 16777215));
+        frame_2->setFrameShape(QFrame::StyledPanel);
+        frame_2->setFrameShadow(QFrame::Raised);
+        horizontalLayout_2 = new QHBoxLayout(frame_2);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        font = new QFontComboBox(frame_2);
+        font->setObjectName(QStringLiteral("font"));
 
-        horizontalLayout_2->addWidget(frame);
+        horizontalLayout_2->addWidget(font);
+
+        fontSize = new QComboBox(frame_2);
+        fontSize->setObjectName(QStringLiteral("fontSize"));
+        fontSize->setMinimumSize(QSize(50, 0));
+        fontSize->setEditable(true);
+
+        horizontalLayout_2->addWidget(fontSize);
+
+
+        formLayout->setWidget(8, QFormLayout::SpanningRole, frame_2);
+
+
+        horizontalLayout_3->addWidget(frame);
 
         view2 = new QGraphicsView(Blend4);
         view2->setObjectName(QStringLiteral("view2"));
         view2->setMinimumSize(QSize(0, 250));
 
-        horizontalLayout_2->addWidget(view2);
+        horizontalLayout_3->addWidget(view2);
 
         BlendWizard->setPage(3, Blend4);
 #ifndef QT_NO_SHORTCUT
@@ -241,10 +268,8 @@ public:
         label->setText(QApplication::translate("BlendWizard", "Style:", 0));
         style->clear();
         style->insertItems(0, QStringList()
-         << QApplication::translate("BlendWizard", "Circle (clip)", 0)
-         << QApplication::translate("BlendWizard", "Box (clip)", 0)
-         << QApplication::translate("BlendWizard", "Circle (strectch)", 0)
-         << QApplication::translate("BlendWizard", "Box (stretch)", 0)
+         << QApplication::translate("BlendWizard", "Circle (clipped)", 0)
+         << QApplication::translate("BlendWizard", "Square (clipped)", 0)
          << QApplication::translate("BlendWizard", "Ellipse", 0)
          << QApplication::translate("BlendWizard", "Rectangle", 0)
         );
@@ -254,6 +279,22 @@ public:
         label_5->setText(QApplication::translate("BlendWizard", "Outline color:", 0));
         label_6->setText(QApplication::translate("BlendWizard", "Border thickness:", 0));
         label_7->setText(QApplication::translate("BlendWizard", "Text:", 0));
+        fontSize->clear();
+        fontSize->insertItems(0, QStringList()
+         << QApplication::translate("BlendWizard", "8", 0)
+         << QApplication::translate("BlendWizard", "10", 0)
+         << QApplication::translate("BlendWizard", "12", 0)
+         << QApplication::translate("BlendWizard", "14", 0)
+         << QApplication::translate("BlendWizard", "16", 0)
+         << QApplication::translate("BlendWizard", "18", 0)
+         << QApplication::translate("BlendWizard", "20", 0)
+         << QApplication::translate("BlendWizard", "24", 0)
+         << QApplication::translate("BlendWizard", "28", 0)
+         << QApplication::translate("BlendWizard", "32", 0)
+         << QApplication::translate("BlendWizard", "40", 0)
+         << QApplication::translate("BlendWizard", "48", 0)
+         << QApplication::translate("BlendWizard", "72", 0)
+        );
     } // retranslateUi
 
 };

@@ -88,15 +88,40 @@ void CropScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 			p2 = event->pos();
 		QRectF bound = QRectF(p1, p2).normalized();
 		setSceneRect(bound);
-		QImage img(width(), height(), QImage::Format_ARGB32);
-		img.fill(Qt::transparent);
-		QPainter painter(&img);
-		painter.setRenderHint(QPainter::HighQualityAntialiasing);
-		render(&painter);
-		cropPix = QPixmap().fromImage(img);
 		crop_ok = true;
 	}
 	else if (event->button() == Qt::RightButton && crop_ok) {
 		setSceneRect(myPix.rect());
 	}
+}
+
+QPixmap CropScene::cropped() {
+	QImage img(width(), height(), QImage::Format_ARGB32);
+	img.fill(Qt::transparent);
+	QPainter painter(&img);
+	painter.setRenderHint(QPainter::HighQualityAntialiasing);
+	render(&painter);
+	p1 = QPointF();
+	cropPix = QPixmap().fromImage(img);
+	return cropPix;
+}
+
+//class BlendScene
+BlendScene::BlendScene(const QString& source, const QPixmap& thumb, QObject* parent) :
+	QGraphicsScene(parent)
+{
+	thumbnail = thumb;
+	base = QPixmap(source);
+}
+
+void BlendScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+	QGraphicsScene::mousePressEvent(event);
+}
+
+void BlendScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+	QGraphicsScene::mouseMoveEvent(event);
+}
+
+void BlendScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+	QGraphicsScene::mouseReleaseEvent(event);
 }

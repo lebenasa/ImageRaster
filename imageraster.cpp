@@ -796,6 +796,11 @@ void ImageRaster::closeEvent(QCloseEvent *event) {
 	QMainWindow::closeEvent(event);
 }
 
+QPointF ImageRaster::toRealMod() {
+	return QPointF(1.0 * profileModel->at(mapProfile->currentIndex()).x() / scene->width(),
+		1.0 * profileModel->at(mapProfile->currentIndex()).y() / scene->height());
+}
+
 void ImageRaster::sceneAddItem(QGraphicsItem* item) {
 	scene->addItem(item);
 }
@@ -821,8 +826,8 @@ void ImageRaster::addLR(LineRuler* r) {
 }
 
 void ImageRaster::updateLR() {
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
+	int modifierX = toRealMod().x();
+	int modifierY = toRealMod().y();	
 	for (int i=0; i<lrModel->rowCount(); ++i) {
 		if (auto b = (LineRuler*)lrModel->at(i)) {
 			QLineF line = b->line();
@@ -853,8 +858,8 @@ void ImageRaster::addRR(RectRuler* r) {
 }
 
 void ImageRaster::updateRR() {
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
+	int modifierX = toRealMod().x();
+	int modifierY = toRealMod().y();	
 	for (int i=0; i<rrModel->rowCount(); ++i) {
 		if (auto b = (RectRuler*)rrModel->at(i)) {
 			QRectF r = b->rect();
@@ -870,19 +875,53 @@ void ImageRaster::updateRR() {
 	}
 }
 
-void ImageRaster::addCR(const QRectF& r) {
-	//Recalculate circle using calibration data:
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
-	QPointF center = r.center();
-	double radius = r.width()/2;
-	double r1 = radius * modifierX;
-	double r2 = radius * modifierY;
-	QPointF TL = QPointF(center.x()-r1, center.y()-r2);
-	QRectF circle = QRectF(TL, QSizeF(r1, r2));
+QRectF ImageRaster::rectFrom3Point(const QPointF& p1, const QPointF& p2, const QPointF& p3) {
+	QPointF mid1 = QPointF((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
+	QPointF mid2 = QPointF((p2.x()+p3.x())/2, (p2.y()+p3.y())/2);
+	double m1 = (p2.y()-p1.y())/(p2.x()-p1.x());
+	double m2 = (p3.y()-p2.y())/(p3.x()-p2.x());
+	double mL1 = -(1.0/m1);
+	double mL2 = -(1.0/m2);
+
+	double k1 = -mL1 * mid1.x() + mid1.y();
+	double k2 = -mL2 * mid2.x() + mid2.y();
+
+	double x = (k2-k1)/(mL1-mL2);
+	double y = mL1 * x + k1;
+	QPointF center = QPointF(x, y);
+	double radius = sqrt(pow((p1.x()-x), 2) + pow((p1.y()-y), 2));
+	QPointF TL = QPointF(x-radius, y-radius);
+	return QRectF(TL, QSizeF(2*radius, 2*radius));
+}
+
+QRectF ImageRaster::calibratedCircle(const QPointF& pa, const QPointF& pb, const QPointF& pc, double& radius) {
+	//Calculate circle using calibration data:
+	double modifierX = toRealMod().x();
+	double modifierY = toRealMod().y();
+
+	QPointF p1 = QPointF(pa.x()*modifierX, pa.y()*modifierY);
+	QPointF p2 = QPointF(pb.x()*modifierX, pb.y()*modifierY);
+	QPointF p3 = QPointF(pc.x()*modifierX, pc.y()*modifierY);
+
+	QRectF r_circle = rectFrom3Point(p1, p2, p3);
+	radius = r_circle.width() / 2;
+
+	//Reconvert it to pixel value:
+	QPointF center = QPointF(r_circle.center().x()/modifierX, r_circle.center().y()/modifierY);
+	double may = radius / modifierX;
+	double min = radius / modifierY;
+	QPointF TL = center - QPointF(may, min);
+	QRectF circle = QRectF(TL, QSizeF(may*2, min*2));
+	return circle;
+}
+
+void ImageRaster::addCR(const QPointF& pa, const QPointF& pb, const QPointF& pc) {
+	double radius = 0;
+	QRectF circle = calibratedCircle(pa, pb, pc, radius);
+
 	CircleRuler* ruler = new CircleRuler(circle);
 	scene->addItem(ruler);
-	ruler->setRadius(radius);
+	ruler->setOriginal(pa, pb, pc);
 
 	//Apply Format:
 	QPen pen1 = QPen(crModel->color1());
@@ -900,41 +939,29 @@ void ImageRaster::addCR(const QRectF& r) {
 }
 
 void ImageRaster::updateCR() {
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
 	for (int i=0; i<crModel->rowCount(); ++i) {
 		if (auto b = (CircleRuler*)crModel->at(i)) {
-			QRectF r = b->rect();
-			double r_radius = b->radius();
-			if (b->radius() == r_radius && b->mod() == modifier)
+			QList<QPointF> original = b->original();
+			double radius = 0;
+			QRectF circle = calibratedCircle(original[0], original[1], original[2] , radius);
+			if (radius == b->radius() && modifier == b->mod())
 				continue;
+			b->setRect(circle);
 			b->setMod(modifier);
-			crModel->setData(crModel->index(i, 3), r_radius);
+			crModel->setData(crModel->index(i, 3), radius);
 			crModel->setData(crModel->index(i, 10), b->defaultText());
 		}
 	}
 }
 
-void ImageRaster::addTC(const QRectF& r1, const QRectF& r2) {
-	//Recalculate circle using calibration data:
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
-
-	QPointF center1 = r1.center();
-	double radius1 = r1.width()/2;
-	double may1 = radius1 * modifierX;
-	double min1 = radius1 * modifierY;
-	QPointF TL1 = QPointF(center1.x()-may1, center1.y()-min1);
-	QRectF circle1 = QRectF(TL1, QSizeF(may1, min1));
-
-	QPointF center2 = r2.center();
-	double radius2 = r2.width()/2;
-	double may2 = radius2 * modifierX;
-	double min2 = radius2 * modifierY;
-	QPointF TL2 = QPointF(center2.x()-may2, center2.y()-min2);
-	QRectF circle2 = QRectF(TL2, QSizeF(may2, min2));
+void ImageRaster::addTC(const QPointF& pa, const QPointF& pb, const QPointF& pc,
+						const QPointF& pd, const QPointF& pe, const QPointF& pf) {
+	double radius1 = 0, radius2 = 0;
+	QRectF circle1 = calibratedCircle(pa, pb, pc, radius1);
+	QRectF circle2 = calibratedCircle(pd, pe, pf, radius2);
 
 	Circle2Ruler *ruler = new Circle2Ruler(circle1, circle2);
+	ruler->setOriginal(pa, pb, pc, pd, pe, pf);
 	scene->addItem(ruler);
 
 	//Apply Format:
@@ -953,8 +980,8 @@ void ImageRaster::addTC(const QRectF& r1, const QRectF& r2) {
 }
 
 void ImageRaster::updateTC() {
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
+	int modifierX = toRealMod().x();
+	int modifierY = toRealMod().y();
 	for (int i=0; i<tcModel->rowCount(); ++i) {
 		if (auto b = (Circle2Ruler*)tcModel->at(i)) {
 			QLineF line = b->line();
@@ -985,8 +1012,8 @@ void ImageRaster::addPR(PolyRuler* r) {
 }
 
 void ImageRaster::updatePR() {
-	int modifierX = profileModel->at(mapProfile->currentIndex()).x();
-	int modifierY = profileModel->at(mapProfile->currentIndex()).y();
+	int modifierX = toRealMod().x();
+	int modifierY = toRealMod().y();
 	for (int index=0; index<prModel->rowCount(); ++index) {
 		if (auto b = (PolyRuler*)prModel->at(index)) {
 			QPolygonF poly = b->rect();
@@ -1080,16 +1107,16 @@ void ImageRaster::defaultText() {
 		rrModel->setData(rrModel->index(mapRR->currentIndex(), 10), rr->defaultText());
 	}
 	else if (RulerState::Circle == modeToolbar->rState) {
-		CircleRuler* lr = (CircleRuler*)lrModel->at(mapLR->currentIndex());
-		crModel->setData(lrModel->index(mapCR->currentIndex(), 10), lr->defaultText());
+		CircleRuler* lr = (CircleRuler*)crModel->at(mapCR->currentIndex());
+		crModel->setData(crModel->index(mapCR->currentIndex(), 10), lr->defaultText());
 	}
 	else if (RulerState::Circle2 == modeToolbar->rState) {
-		Circle2Ruler* lr = (Circle2Ruler*)lrModel->at(mapLR->currentIndex());
-		tcModel->setData(lrModel->index(mapTC->currentIndex(), 10), lr->defaultText());
+		Circle2Ruler* lr = (Circle2Ruler*)tcModel->at(mapTC->currentIndex());
+		tcModel->setData(tcModel->index(mapTC->currentIndex(), 10), lr->defaultText());
 	}
 	else if (RulerState::Polygon == modeToolbar->rState) {
-		PolyRuler* lr = (PolyRuler*)lrModel->at(mapLR->currentIndex());
-		prModel->setData(lrModel->index(mapPR->currentIndex(), 10), lr->defaultText());
+		PolyRuler* lr = (PolyRuler*)prModel->at(mapPR->currentIndex());
+		prModel->setData(prModel->index(mapPR->currentIndex(), 10), lr->defaultText());
 	}
 }
 

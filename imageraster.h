@@ -171,6 +171,8 @@ public slots:
 	void receiveCalibration(int pixel);
 	void endCalibration();
 
+	QPointF toRealMod();
+
 	void addLR(LineRuler*);
 	void updateLR();
 
@@ -184,10 +186,13 @@ public slots:
 	void addRR(RectRuler*);
 	void updateRR();
 
-	void addCR(const QRectF&);
+	QRectF rectFrom3Point(const QPointF&, const QPointF&, const QPointF&);
+	QRectF calibratedCircle(const QPointF&, const QPointF&, const QPointF&, double&);
+	void addCR(const QPointF&, const QPointF&, const QPointF&);
 	void updateCR();
 
-	void addTC(const QRectF&, const QRectF&);
+	void addTC(const QPointF&, const QPointF&, const QPointF&,
+		const QPointF&, const QPointF&, const QPointF&);
 	void updateTC();
 
 	void addPR(PolyRuler*);

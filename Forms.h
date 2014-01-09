@@ -44,14 +44,19 @@ signals:
 	void checked_changed(int, int);
 };
 
+class CropScene;
+class BlendScene;
 class BlendWizard:
 	public QWizard,
 	public Ui::BlendWizard
 {
 	Q_OBJECT
 	QString thumbFile;
+	CropScene* crop;
+	BlendScene* blend;
+	QString base;
 public:
-	BlendWizard(QWidget* parent=0);
+	BlendWizard(const QString& source, QWidget* parent=0);
 	enum PageStatus {
 		Intro, OpenImg, Crop, StyleEdit
 	} page_status;

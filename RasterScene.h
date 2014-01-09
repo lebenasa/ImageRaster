@@ -44,7 +44,7 @@ public:
 	CropScene(const QString& img, QObject* parent=0);
 	~CropScene(void) { }
 
-	QPixmap cropped() const { return cropPix; }
+	QPixmap cropped();
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -57,7 +57,7 @@ class BlendScene:
 	Q_OBJECT
 	QPixmap thumbnail, base;
 public:
-	BlendScene(const QString& source, const QPixmap& thumb);
+	BlendScene(const QString& source, const QPixmap& thumb, QObject* parent=0);
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);

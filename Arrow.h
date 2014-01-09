@@ -185,6 +185,7 @@ class CircleRuler:
 	public LineRuler
 {
 	QGraphicsEllipseItem *myRect, *bgR;
+	QPointF p1, p2, p3;
 protected:
 	QPointF calculateTextPos() const override;
 public:
@@ -203,6 +204,11 @@ public:
 	void setPen2(const QPen& p);
 
 	QRectF rect() const { return myRect->rect(); }
+
+	void setOriginal(const QPointF& pa, const QPointF& pb, const QPointF& pc);
+	QList<QPointF> original() const;
+
+	void setRect(const QRectF& r);
 };
 
 class Circle2Ruler:
@@ -211,6 +217,7 @@ class Circle2Ruler:
 	QGraphicsEllipseItem *myRect1, *bgR1;
 	QGraphicsEllipseItem *myRect2, *bgR2;
 	QLineF lineFrom2Rect(const QRectF& r1, const QRectF& r2);
+	QList<QPointF> origin_points;
 public:
 	Circle2Ruler(const QRectF& r1, const QRectF& r2, Container* parent=0);
 	
@@ -223,6 +230,12 @@ public:
 
 	void setPen1(const QPen& p);
 	void setPen2(const QPen& p);
+
+	void setOriginal(const QPointF& pa, const QPointF& pb, const QPointF& pc,
+		const QPointF& pd, const QPointF& pe, const QPointF& pf);
+	QList<QPointF> original() const;
+
+	void setRect(const QRectF& r1, const QRectF& r2);
 };
 
 class PolyRuler:
@@ -335,4 +348,78 @@ public:
 	int type() const { return Type; }
 
 	void updateRect();
+};
+
+class RectItem:
+	public QGraphicsRectItem,
+	public Format
+{
+	QGraphicsRectItem *bg;
+public:
+	RectItem(const QRectF& r, QGraphicsItem* parent=0);
+	~RectItem() { }
+
+	enum { Type = UserType + 15 };
+	int type() const { return Type; }
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+};
+
+class CircleItem:
+	public QGraphicsEllipseItem,
+	public Format
+{
+	QGraphicsEllipseItem* bg;
+public:
+	CircleItem(const QRectF& r, QGraphicsItem* parent=0);
+	~CircleItem() { }
+
+	enum { Type = UserType + 16 };
+	int type() const { return Type; }
+
+	void setPen1(const QPen& p);
+	void setPen2(const QPen& p);
+};
+
+class FrameRect:
+	public RectItem
+{
+	QPixmap myPix;
+public:
+	FrameRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
+	~FrameRect() { }
+
+	enum { Type = UserType + 16 };
+	int type() const { return Type; }
+
+	virtual void setPix(const QPixmap& pix) = 0;
+	QPixmap pix() const { return myPix; }
+};
+
+class FrameCircle:
+	public CircleItem
+{
+	QPixmap myPix;
+public:
+	FrameCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
+	~FrameCircle() { }
+
+	enum { Type = UserType + 17 };
+	int type() const { return Type; }
+
+	virtual void setPix(const QPixmap& pix) = 0;
+	QPixmap pix() const { return myPix; }
+};
+
+class ClipRect:
+	public FrameRect
+{
+public:
+	ClipRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
+
+	enum { Type = UserType + 18 };
+	int type() const { return Type; }
+
+	void setPix(const QPixmap& pix);
 };

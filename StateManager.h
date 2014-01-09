@@ -46,8 +46,9 @@ signals:
 	void addMarker(Marker*);
 	void addLR(LineRuler*);
 	void addRR(RectRuler*);
-	void addCR(const QRectF&);
-	void addTC(const QRectF&, const QRectF&);
+	void addCR(const QPointF&, const QPointF&, const QPointF&);
+	void addTC(const QPointF&, const QPointF&, const QPointF&,
+		const QPointF&, const QPointF&, const QPointF&);
 	void addPR(PolyRuler*);
 	void sendCalibration(int);
 

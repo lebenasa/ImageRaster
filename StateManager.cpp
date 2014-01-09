@@ -381,7 +381,7 @@ void StateManager::cmrRulerCircle(QGraphicsSceneMouseEvent *event, MouseState ms
 			click = 0;
 			delete tmpCircle;
 			hasTmpItem = false;
-			emit addCR(rectFrom3Point(p1, p2, p3));
+			emit addCR(p1, p2, p3);
 		}
 	}
 	else if (MouseState::Move == ms) {
@@ -441,7 +441,7 @@ void StateManager::cmrRulerCentertoCenter(QGraphicsSceneMouseEvent *event, Mouse
 			click = 0;
 			delete tmpCircle;
 			hasTmpItem = false;
-			emit addTC(rectFrom3Point(p1, p2, p3), rectFrom3Point(p4, p5, p6));
+			emit addTC(p1, p2, p3, p4, p5, p6);
 		}
 	}
 	else if (MouseState::Move == ms) {
@@ -622,29 +622,26 @@ void StateManager::cmrCIdle(QGraphicsSceneMouseEvent *event, MouseState ms)	{
 	}
 }
 
-QRectF StateManager::rectFrom3Point(const QPointF& pa, const QPointF& pb, const QPointF& pc) {
-	 QList<double> X, Y;
-    X << pa.x() << pb.x() << pc.x();
-    Y << pa.y() << pb.y() << pc.y();
-    qSort(X.begin(), X.end());
-    qSort(Y.begin(), Y.end());
-    QPointF rect_tl(X[0], Y[0]);
-    QPointF rect_br(X[2], Y[2]);
-    QRectF result(rect_tl, rect_br);
-    QPointF center = result.center();
-    if (result.height() > result.width()) {
-        QPointF fin_tl(center.x()-result.height()/2, center.y()-result.height()/2);
-        result.setRect(fin_tl.x(), fin_tl.y(), result.height(), result.height());
-    }
-    else {
-        QPointF fin_tl(center.x()-result.width()/2, center.y()-result.width()/2);
-        result.setRect(fin_tl.x(), fin_tl.y(), result.width(), result.width());
-    }
-    return result;
+QRectF StateManager::rectFrom3Point(const QPointF& p1, const QPointF& p2, const QPointF& p3) {
+	QPointF mid1 = QPointF((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
+	QPointF mid2 = QPointF((p2.x()+p3.x())/2, (p2.y()+p3.y())/2);
+	double m1 = (p2.y()-p1.y())/(p2.x()-p1.x());
+	double m2 = (p3.y()-p2.y())/(p3.x()-p2.x());
+	double mL1 = -(1.0/m1);
+	double mL2 = -(1.0/m2);
+
+	double k1 = -mL1 * mid1.x() + mid1.y();
+	double k2 = -mL2 * mid2.x() + mid2.y();
+
+	double x = (k2-k1)/(mL1-mL2);
+	double y = mL1 * x + k1;
+	QPointF center = QPointF(x, y);
+	double radius = sqrt(pow((p1.x()-x), 2) + pow((p1.y()-y), 2));
+	QPointF TL = QPointF(x-radius, y-radius);
+	return QRectF(TL, QSizeF(2*radius, 2*radius));
 }
 
 QRectF StateManager::rectFromCenter(const QPointF& pa) {
 	QPointF tl = pa - QPointF(5, 5);
 	return QRectF(tl, QSizeF(10, 10));
 }
-

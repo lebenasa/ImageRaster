@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Forms.h"
+#include "RasterScene.h"
 
 RulerDock::RulerDock(QWidget* parent) :
 	QDockWidget(parent),
@@ -88,19 +89,19 @@ void ScaleDock::sendState() {
 	emit checked_changed(h, v);
 }
 
-BlendWizard::BlendWizard(QWidget* parent) :
+BlendWizard::BlendWizard(const QString& source, QWidget* parent) :
 	QWizard(parent),
 	Ui::BlendWizard()
 {
 	Ui::BlendWizard::setupUi(this);
 	QMetaObject::connectSlotsByName(this);
+	base = source;
 }
 
 bool BlendWizard::validateCurrentPage() {
-	switch (currentId()) {
-	case Intro:
-		break;
-	case OpenImg:
+	if (Intro == currentId()) {
+	}
+	else if (OpenImg == currentId()) {
 		if (!QFile::exists(browse->text())) {
 			QMessageBox::warning(this, tr("Image Not Found"),
 			tr("Unable to find image. Please browse for image again."), QMessageBox::Ok);
@@ -108,13 +109,17 @@ bool BlendWizard::validateCurrentPage() {
 		}
 		else {
 			thumbFile = browse->text();
-			return true;
+			crop = new CropScene(thumbFile, this);
+			view1->setScene(crop);
 		}
-		break;
-	case Crop:
-		break;
-	case StyleEdit:
-		break;
+	}
+	else if (Crop == currentId()) {
+		QPixmap pix = crop->cropped();
+		blend = new BlendScene(base, pix, this);
+		view2->setScene(blend);
+	}
+	else if (StyleEdit == currentId()) {
+		
 	}
 	return QWizard::validateCurrentPage();
 }
