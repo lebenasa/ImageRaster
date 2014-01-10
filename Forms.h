@@ -68,9 +68,23 @@ public:
 	bool validateCurrentPage();
 	void applyFormat();
 
+	int getStyle() const { return styleCombo->currentIndex(); }
+	QPen getPen1() { return QPen(QBrush(color1->color()), lineweight->value()); }
+	QPen getPen2() const { return QPen(color2->color()); }
+	QFont getFont() const { return myFont; }
+	QString getText() const { return text->toPlainText(); }
+	QGraphicsItem* getAnchor();
+	QGraphicsItem* getThumb();
+	QGraphicsSimpleTextItem* getText();
+	QPointF AnchorPos() const;
+	QPointF ThumbPos() const;
+	QPointF TextPos() const;
+
+	void accept();
+
 public slots:
 	void on_browseButton_clicked();
-	void on_Style_currentIndexChanged(int);
+	void on_styleCombo_currentIndexChanged(int);
 	void on_color1_currentIndexChanged();
 	void on_color2_currentIndexChanged();
 	void on_lineweight_valueChanged(int);

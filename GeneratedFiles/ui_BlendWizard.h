@@ -50,7 +50,7 @@ public:
     QFrame *frame;
     QFormLayout *formLayout;
     QLabel *label;
-    QComboBox *style;
+    QComboBox *styleCombo;
     QLabel *label_2;
     QSpinBox *thumbSize;
     QLabel *label_3;
@@ -65,7 +65,7 @@ public:
     QPlainTextEdit *text;
     QFrame *frame_2;
     QHBoxLayout *horizontalLayout_2;
-    QFontComboBox *font;
+    QFontComboBox *Font;
     QComboBox *fontSize;
     QGraphicsView *view2;
 
@@ -73,7 +73,7 @@ public:
     {
         if (BlendWizard->objectName().isEmpty())
             BlendWizard->setObjectName(QStringLiteral("BlendWizard"));
-        BlendWizard->resize(623, 490);
+        BlendWizard->resize(623, 501);
         BlendWizard->setWizardStyle(QWizard::AeroStyle);
         Blend1 = new QWizardPage();
         Blend1->setObjectName(QStringLiteral("Blend1"));
@@ -134,11 +134,11 @@ public:
 
         formLayout->setWidget(0, QFormLayout::LabelRole, label);
 
-        style = new QComboBox(frame);
-        style->setObjectName(QStringLiteral("style"));
-        style->setMinimumSize(QSize(100, 0));
+        styleCombo = new QComboBox(frame);
+        styleCombo->setObjectName(QStringLiteral("styleCombo"));
+        styleCombo->setMinimumSize(QSize(100, 0));
 
-        formLayout->setWidget(0, QFormLayout::FieldRole, style);
+        formLayout->setWidget(0, QFormLayout::FieldRole, styleCombo);
 
         label_2 = new QLabel(frame);
         label_2->setObjectName(QStringLiteral("label_2"));
@@ -149,6 +149,8 @@ public:
 
         thumbSize = new QSpinBox(frame);
         thumbSize->setObjectName(QStringLiteral("thumbSize"));
+        thumbSize->setMaximum(1000);
+        thumbSize->setValue(128);
 
         formLayout->setWidget(1, QFormLayout::FieldRole, thumbSize);
 
@@ -159,6 +161,8 @@ public:
 
         anchorSize = new QSpinBox(frame);
         anchorSize->setObjectName(QStringLiteral("anchorSize"));
+        anchorSize->setMaximum(1000);
+        anchorSize->setValue(32);
 
         formLayout->setWidget(2, QFormLayout::FieldRole, anchorSize);
 
@@ -189,6 +193,7 @@ public:
 
         lineweight = new QSpinBox(frame);
         lineweight->setObjectName(QStringLiteral("lineweight"));
+        lineweight->setValue(1);
 
         formLayout->setWidget(5, QFormLayout::FieldRole, lineweight);
 
@@ -215,10 +220,10 @@ public:
         frame_2->setFrameShadow(QFrame::Raised);
         horizontalLayout_2 = new QHBoxLayout(frame_2);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        font = new QFontComboBox(frame_2);
-        font->setObjectName(QStringLiteral("font"));
+        Font = new QFontComboBox(frame_2);
+        Font->setObjectName(QStringLiteral("Font"));
 
-        horizontalLayout_2->addWidget(font);
+        horizontalLayout_2->addWidget(Font);
 
         fontSize = new QComboBox(frame_2);
         fontSize->setObjectName(QStringLiteral("fontSize"));
@@ -241,7 +246,7 @@ public:
 
         BlendWizard->setPage(3, Blend4);
 #ifndef QT_NO_SHORTCUT
-        label->setBuddy(style);
+        label->setBuddy(styleCombo);
         label_2->setBuddy(thumbSize);
         label_3->setBuddy(anchorSize);
         label_4->setBuddy(color1);
@@ -266,8 +271,8 @@ public:
         Blend4->setTitle(QApplication::translate("BlendWizard", "Style & Position Editor", 0));
         Blend4->setSubTitle(QApplication::translate("BlendWizard", "Here you can change your thumbnail appearance and add it to the scene. Note that you can't change thumbnail style after you close this wizard.", 0));
         label->setText(QApplication::translate("BlendWizard", "Style:", 0));
-        style->clear();
-        style->insertItems(0, QStringList()
+        styleCombo->clear();
+        styleCombo->insertItems(0, QStringList()
          << QApplication::translate("BlendWizard", "Circle (clipped)", 0)
          << QApplication::translate("BlendWizard", "Square (clipped)", 0)
          << QApplication::translate("BlendWizard", "Ellipse", 0)

@@ -15,7 +15,7 @@ ImageRaster::ImageRaster(QWidget *parent)
 	: QMainWindow(parent), hasImage(false)
 {
 	ui.setupUi(this);
-	QMetaObject::connectSlotsByName(this);
+	//QMetaObject::connectSlotsByName(this);
 	scene = new RasterScene(this);
 	modeToolbar = new nModeToolbar("Mode Select", this);
 	loadSettings();
@@ -1362,3 +1362,22 @@ void ImageRaster::on_actionLegend_triggered() {
 	LegendItem* legend = new LegendItem(markerModel, origin);
 	scene->addItem(legend);
 }
+
+void ImageRaster::on_actionBlend_triggered() {
+	blendWizard = new BlendWizard(image, this);
+	blendWizard->showMaximized();
+	connect(blendWizard, &BlendWizard::accepted, this, &ImageRaster::on_blendWizard_accepted);
+}
+
+void ImageRaster::on_blendWizard_accepted() {
+	QGraphicsItem* anchor = blendWizard->getAnchor();
+	QGraphicsItem* thumb = blendWizard->getThumb();
+	QGraphicsSimpleTextItem* text = blendWizard->getText();
+	scene->addItem(anchor);
+	scene->addItem(thumb);
+	scene->addItem(text);
+	//anchor->setPos(blendWizard->AnchorPos());
+	//thumb->setPos(blendWizard->ThumbPos());
+	//text->setPos(blendWizard->TextPos());
+}
+

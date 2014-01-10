@@ -33,7 +33,7 @@ ScaleDock::ScaleDock(QWidget* parent) :
 	connect(verticalGroup, SIGNAL(buttonClicked(int)), this, SLOT(checkState()));
 	connect(length, SIGNAL(currentTextChanged(QString)), this, SLOT(sendState()));
 	connect(unit, SIGNAL(currentIndexChanged(int)), this, SLOT(sendState()));
-	connect(Style, SIGNAL(currentIndexChanged(int)), this, SLOT(sendState()));
+	connect(style_, SIGNAL(currentIndexChanged(int)), this, SLOT(sendState()));
 }
 
 void ScaleDock::checkState() {
@@ -94,9 +94,9 @@ BlendWizard::BlendWizard(const QString& source, QWidget* parent) :
 	Ui::BlendWizard()
 {
 	Ui::BlendWizard::setupUi(this);
-	QMetaObject::connectSlotsByName(this);
+	//QMetaObject::connectSlotsByName(this);
 	base = source;
-	myFont = Font->currentFont();
+	myFont = QFont();
 }
 
 bool BlendWizard::validateCurrentPage() {
@@ -117,7 +117,14 @@ bool BlendWizard::validateCurrentPage() {
 	else if (Crop == currentId()) {
 		crop_pix = crop->cropped();
 		blend = new BlendScene(base, crop_pix, this);
+		view2->setDragMode(QGraphicsView::RubberBandDrag);
 		view2->setScene(blend);
+		view2->centerOn(QPointF(100, 100));
+		Font->setCurrentFont(myFont);
+		color1->setColor(Qt::black);
+		color2->setColor(Qt::white);
+		fontSize->setCurrentText(QString().setNum(myFont.pointSize()));
+		text->setPlainText("Text");
 	}
 	else if (StyleEdit == currentId()) {
 		
@@ -130,14 +137,14 @@ void BlendWizard::on_browseButton_clicked() {
 	openFileDg.setFileMode(QFileDialog::ExistingFile);
 	openFileDg.setNameFilter("Portable Network Graphics File (*.png);;JPEG File-Format (*.jpg);;Bitmap File (*.bmp)");
 	//openFileDg.setDirectory(QDir::home());
-	openFileDg.setViewMode(QFileDialog::Detail);
+	//openFileDg.setViewMode(QFileDialog::Detail);
 	QString imgName;
 	if (openFileDg.exec())
 		imgName = openFileDg.selectedFiles().at(0);
 	browse->setText(imgName);
 }
 
-void BlendWizard::on_Style_currentIndexChanged(int i) {
+void BlendWizard::on_styleCombo_currentIndexChanged(int i) {
 	blend->removeAnchor();
 	blend->removeThumb();
 	if (Circle == i) {
@@ -149,12 +156,12 @@ void BlendWizard::on_Style_currentIndexChanged(int i) {
 		blend->addRectItem(anchorSize->value(), anchorSize->value());
 	}
 	else if (Ellipse == i) {
-		double ratio = crop_pix.width() / crop_pix.height();
+		double ratio = 1.0 * crop_pix.width() / crop_pix.height();
 		blend->addFitCircle(thumbSize->value(), thumbSize->value() / ratio);
 		blend->addCircleItem(anchorSize->value(), anchorSize->value() / ratio);
 	}
 	else if (Rectangle == i) {
-		double ratio = crop_pix.width() / crop_pix.height();
+		double ratio = 1.0 * crop_pix.width() / crop_pix.height();
 		blend->addFitRect(thumbSize->value(), thumbSize->value() / ratio);
 		blend->addRectItem(anchorSize->value(), anchorSize->value() / ratio);
 	}
@@ -178,11 +185,11 @@ void BlendWizard::on_lineweight_valueChanged(int i) {
 }
 
 void BlendWizard::on_thumbSize_valueChanged(int) {
-	on_Style_currentIndexChanged(Style->currentIndex());
+	on_styleCombo_currentIndexChanged(styleCombo->currentIndex());
 }
 
 void BlendWizard::on_anchorSize_valueChanged(int) {
-	on_Style_currentIndexChanged(Style->currentIndex());
+	on_styleCombo_currentIndexChanged(styleCombo->currentIndex());
 }
 
 void BlendWizard::on_text_textChanged() {
@@ -198,6 +205,17 @@ void BlendWizard::on_Font_currentFontChanged(const QFont & font) {
 void BlendWizard::on_fontSize_currentIndexChanged() {
 	myFont.setPointSize(fontSize->currentText().toInt());
 	blend->setFont(myFont);
+}
+
+QGraphicsItem* BlendWizard::getAnchor() { return blend->getAnchor(); }
+QGraphicsItem* BlendWizard::getThumb() { return blend->getThumb(); }
+QGraphicsSimpleTextItem* BlendWizard::getText() { return blend->getText(); }
+QPointF BlendWizard::AnchorPos() const { return blend->AnchorPos(); }
+QPointF BlendWizard::ThumbPos() const { return blend->ThumbPos(); }
+QPointF BlendWizard::TextPos() const { return blend->TextPos(); }
+
+void BlendWizard::accept() {
+	QWizard::accept();
 }
 
 BlendDock::BlendDock(QWidget* parent) :

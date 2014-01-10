@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>623</width>
-    <height>490</height>
+    <height>501</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,12 +121,12 @@
           <string>Style:</string>
          </property>
          <property name="buddy">
-          <cstring>Style</cstring>
+          <cstring>styleCombo</cstring>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="Style">
+        <widget class="QComboBox" name="styleCombo">
          <property name="minimumSize">
           <size>
            <width>100</width>
@@ -172,7 +172,14 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QSpinBox" name="thumbSize"/>
+        <widget class="QSpinBox" name="thumbSize">
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>128</number>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_3">
@@ -185,7 +192,14 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QSpinBox" name="anchorSize"/>
+        <widget class="QSpinBox" name="anchorSize">
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>32</number>
+         </property>
+        </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_4">
@@ -224,7 +238,11 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QSpinBox" name="lineweight"/>
+        <widget class="QSpinBox" name="lineweight">
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="label_7">

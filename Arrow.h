@@ -393,7 +393,7 @@ public:
 	FrameRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 	~FrameRect() { }
 
-	enum { Type = UserType + 16 };
+	enum { Type = UserType + 17 };
 	int type() const { return Type; }
 
 	virtual void setPix(const QPixmap& pix) = 0;
@@ -408,7 +408,7 @@ public:
 	FrameCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 	~FrameCircle() { }
 
-	enum { Type = UserType + 17 };
+	enum { Type = UserType + 18 };
 	int type() const { return Type; }
 
 	virtual void setPix(const QPixmap& pix) = 0;
@@ -421,7 +421,7 @@ class ClipRect:
 public:
 	ClipRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 
-	enum { Type = UserType + 18 };
+	enum { Type = UserType + 19 };
 	int type() const { return Type; }
 
 	void setPix(const QPixmap& pix);
@@ -433,7 +433,7 @@ class ClipCircle:
 public:
 	ClipCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 
-	enum { Type = UserType + 19 };
+	enum { Type = UserType + 20 };
 	int type() const { return Type; }
 
 	void setPix(const QPixmap& pix);
@@ -445,7 +445,7 @@ class FitRect:
 public:
 	FitRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 
-	enum { Type = UserType + 20 };
+	enum { Type = UserType + 21 };
 	int type() const { return Type; }
 
 	void setPix(const QPixmap& pix);
@@ -457,7 +457,7 @@ class FitCircle:
 public:
 	FitCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent=0);
 
-	enum { Type = UserType + 21 };
+	enum { Type = UserType + 22 };
 	int type() const { return Type; }
 
 	void setPix(const QPixmap& pix);

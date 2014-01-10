@@ -39,7 +39,10 @@ class CropScene:
 	QPixmap myPix, cropPix;
 	QGraphicsRectItem *tmpRect;
 	QPointF p1, p2;
+	bool isDragged;
 	bool crop_ok;
+	double zoom;
+	QRectF bound;
 public:
 	CropScene(const QString& img, QObject* parent=0);
 	~CropScene(void) { }
@@ -48,7 +51,8 @@ public:
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); 
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+	void wheelEvent(QWheelEvent *event);
 };
 
 class RectItem;
@@ -76,6 +80,13 @@ public:
 	QPointF lastAnchorTL() const { return lastAnchorPos; }
 	QPointF lastThumbTL() const { return lastThumbPos;  }
 	QPointF lastTextTL() const { return myText->pos(); }
+
+	QPointF AnchorPos() const;
+	QPointF ThumbPos() const;
+	QPointF TextPos() const { return myText->pos(); }
+	QGraphicsItem* getAnchor();
+	QGraphicsItem* getThumb();
+	QGraphicsSimpleTextItem* getText() { return myText; }
 
 	void removeAnchor();
 	void removeThumb();

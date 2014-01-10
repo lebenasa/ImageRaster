@@ -29,6 +29,7 @@ class PolyRuler;
 class RulerModel;
 class RulerDock;
 class ScaleDock;
+class BlendWizard;
 
 class ImageRaster : public QMainWindow
 {
@@ -118,6 +119,7 @@ private:
 
 	//Features:
 	ScaleDock *scaleDock;
+	BlendWizard *blendWizard;
 
 	//Formats:
 	int markerIndex;
@@ -207,7 +209,8 @@ public slots:
 
 	void on_actionLegend_triggered();
 
-	//void on_actionBlend_triggered();
+	void on_actionBlend_triggered();
+	void on_blendWizard_accepted();
 };
 
 #endif // IMAGERASTER_H

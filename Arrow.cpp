@@ -860,11 +860,13 @@ RectItem::RectItem(const QRectF& r, QGraphicsItem* parent):
 }
 
 void RectItem::setPen1(const QPen& p) {
+	Format::setPen1(p);
 	QGraphicsRectItem::setPen(p);
 	setPen2(pen2());
 }
 
 void RectItem::setPen2(const QPen& p) {
+	Format::setPen2(p);
 	QPen pen = p;
 	pen.setWidth(pen1().width()+1);
 	bg->setPen(pen);
@@ -882,11 +884,13 @@ CircleItem::CircleItem(const QRectF& r, QGraphicsItem* parent):
 }
 
 void CircleItem::setPen1(const QPen& p) {
+	Format::setPen1(p);
 	QGraphicsEllipseItem::setPen(p);
 	setPen2(pen2());
 }
 
 void CircleItem::setPen2(const QPen& p) {
+	Format::setPen2(p);
 	QPen pen = p;
 	pen.setWidth(pen1().width()+1);
 	bg->setPen(pen);
@@ -918,6 +922,7 @@ void FrameCircle::setPix(const QPixmap& pix) {
 ClipRect::ClipRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
 	FrameRect(pix, QRectF(r.topLeft(), QSizeF(r.width(), r.width())), parent)
 {
+	setPix(pix);
 }
 
 void ClipRect::setPix(const QPixmap& pix) {
@@ -932,15 +937,19 @@ void ClipRect::setPix(const QPixmap& pix) {
 	QImage cropped = img.copy(r);
 	//Scale it, and set it as brush:
 	QImage scaled = cropped.scaled(rect().size().toSize(),
-		Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	QBrush pix_brush = QBrush(scaled);
+	QPointF currentTL = sceneTransform().map(boundingRect().topLeft());
+	pix_brush.setTransform(QTransform::fromTranslate(currentTL.x(), currentTL.y()));
 	setBrush(pix_brush);
+	setPen2(pen2());
 }
 
 //class ClipCircle
 ClipCircle::ClipCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
 	FrameCircle(pix, QRectF(r.topLeft(), QSizeF(r.width(), r.width())), parent)
 {
+	setPix(pix);
 }
 
 void ClipCircle::setPix(const QPixmap& pix) {
@@ -955,15 +964,19 @@ void ClipCircle::setPix(const QPixmap& pix) {
 	QImage cropped = img.copy(r);
 	//Scale it, and set it as brush:
 	QImage scaled = cropped.scaled(rect().size().toSize(),
-		Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	QBrush pix_brush = QBrush(scaled);
+	QPointF currentTL = sceneTransform().map(boundingRect().topLeft());
+	pix_brush.setTransform(QTransform::fromTranslate(currentTL.x(), currentTL.y()));
 	setBrush(pix_brush);
+	setPen2(pen2());
 }
 
-//class ClipRect
+//class FitRect
 FitRect::FitRect(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
 	FrameRect(pix, r, parent)
 {
+	setPix(pix);
 }
 
 void FitRect::setPix(const QPixmap& pix) {
@@ -973,6 +986,8 @@ void FitRect::setPix(const QPixmap& pix) {
 	QImage scaled = img.scaled(rect().size().toSize(),
 		Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	QBrush pix_brush = QBrush(scaled);
+	QPointF currentTL = sceneTransform().map(boundingRect().topLeft());
+	pix_brush.setTransform(QTransform::fromTranslate(currentTL.x(), currentTL.y()));
 	setBrush(pix_brush);
 }
 
@@ -980,6 +995,7 @@ void FitRect::setPix(const QPixmap& pix) {
 FitCircle::FitCircle(const QPixmap& pix, const QRectF& r, QGraphicsItem* parent):
 	FrameCircle(pix, r, parent)
 {
+	setPix(pix);
 }
 
 void FitCircle::setPix(const QPixmap& pix) {
@@ -989,5 +1005,7 @@ void FitCircle::setPix(const QPixmap& pix) {
 	QImage scaled = img.scaled(rect().size().toSize(),
 		Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	QBrush pix_brush = QBrush(scaled);
+	QPointF currentTL = sceneTransform().map(boundingRect().topLeft());
+	pix_brush.setTransform(QTransform::fromTranslate(currentTL.x(), currentTL.y()));
 	setBrush(pix_brush);
 }

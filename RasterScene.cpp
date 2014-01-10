@@ -52,58 +52,98 @@ CropScene::CropScene(const QString& img, QObject* parent) :
 	QGraphicsScene(parent)
 {
 	myPix = QPixmap(img);
-	addPixmap(myPix);
+	QGraphicsPixmapItem* pix_item = addPixmap(myPix);
+	pix_item->setAcceptHoverEvents(true);
 	setSceneRect(myPix.rect());
 	crop_ok = false;
+	isDragged = false;
+	zoom = 1.0;
 }
 
 void CropScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-	QGraphicsScene::mousePressEvent(event);
 	if (event->button() == Qt::LeftButton && !crop_ok) {
-		if (sceneRect().contains(event->pos()))
-			p1 = event->pos();
+		p1 = event->scenePos();
+		isDragged = true;
 	}
+	QGraphicsScene::mousePressEvent(event);
 }
 
 void CropScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-	QGraphicsScene::mouseMoveEvent(event);
-	if (event->button() == Qt::LeftButton && !crop_ok) {
-		//if (sceneRect().contains(event->pos()))
-		//	p2 = event->pos();
-		//QList<QGraphicsItem*> is;
-		//for (auto p : items())
-		//	if (p == tmpRect)
-		//		is.append(p);
-		//for (auto p : is)
-		//	delete p;
-		//tmpRect = addRect(QRectF(p1, p2).normalized());
-		//QPen pen = QPen(QBrush(Qt::black), 1, Qt::DashLine);
-		//tmpRect->setPen(pen);
+	if (!crop_ok && isDragged) {
+		p2 = event->scenePos();
+		QList<QGraphicsItem*> is;
+		for (auto p : items())
+			if (p == tmpRect)
+				is.append(p);
+		for (auto p : is)
+			delete p;
+		QPen pen = QPen(QBrush(Qt::black), 1, Qt::DashLine);
+		tmpRect = new QGraphicsRectItem(QRectF(p1, p2).normalized());
+		tmpRect->setPen(pen);
+		addItem(tmpRect);
 	}
+	QGraphicsScene::mouseMoveEvent(event);
 }
 
 void CropScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-	QGraphicsScene::mouseReleaseEvent(event);
-	if (event->button() == Qt::LeftButton && !crop_ok) {
-		if (sceneRect().contains(event->pos()))
-			p2 = event->pos();
-		QRectF bound = QRectF(p1, p2).normalized();
-		setSceneRect(bound);
+	if (!crop_ok && isDragged) {
+		p2 = event->scenePos();
+		bound = QRectF(p1, p2).normalized();
+		QList<QGraphicsItem*> is;
+		for (auto p : items())
+			if (p == tmpRect)
+				is.append(p);
+		for (auto p : is)
+			delete p;
+		QPen pen = QPen(QBrush(Qt::black), 1, Qt::DashLine);
+		tmpRect = new QGraphicsRectItem(QRectF(p1, p2).normalized());
+		tmpRect->setPen(pen);
+		addItem(tmpRect);
 		crop_ok = true;
+		isDragged = false;
 	}
 	else if (event->button() == Qt::RightButton && crop_ok) {
-		setSceneRect(myPix.rect());
+		delete tmpRect;
+		crop_ok = false;
 	}
+	QGraphicsScene::mouseReleaseEvent(event);
 }
 
+void CropScene::wheelEvent(QWheelEvent* event) {
+	QPoint delta = event->angleDelta();
+	if (delta.x() >= 0 && delta.y() >= 0) {
+		if (zoom >= 16.0)
+			return;
+		if (zoom < 1.0)
+			zoom += 0.05;
+		else if (zoom >= 1.0 && zoom < 3.0)
+			zoom += .25;
+		else if (zoom >= 3.0)
+			zoom += .5;
+
+		for (auto view : views())
+			view->setTransform(QTransform::fromScale(zoom, zoom), false);
+	}
+	else {
+		if (zoom <= .1)
+			return;
+		if (zoom <= 1.0)
+			zoom -= 0.05;
+		else if (zoom > 1.0 && zoom <= 3.0)
+			zoom -= .25;
+		else if (zoom > 3.0)
+			zoom -= .5;
+
+		for (auto view : views())
+			view->setTransform(QTransform::fromScale(zoom, zoom), false);
+	}
+	event->accept();
+}
+
+
 QPixmap CropScene::cropped() {
-	QImage img(width(), height(), QImage::Format_ARGB32);
-	img.fill(Qt::transparent);
-	QPainter painter(&img);
-	painter.setRenderHint(QPainter::HighQualityAntialiasing);
-	render(&painter);
-	p1 = QPointF();
-	cropPix = QPixmap().fromImage(img);
+	QImage img = myPix.toImage();
+	cropPix = QPixmap::fromImage(img.copy(bound.toRect()));
 	return cropPix;
 }
 
@@ -114,12 +154,15 @@ BlendScene::BlendScene(const QString& source, const QPixmap& thumb, QObject* par
 	thumbnail = thumb;
 	base = QPixmap(source);
 	QGraphicsPixmapItem* bg = addPixmap(base);
-	setSceneRect(bg->boundingRect());
-	lastThumbPos = sceneRect().center() + QPointF(128, 128);
-	lastAnchorPos = sceneRect().center();
-	myText = new QGraphicsSimpleTextItem();
-	myText->setPos(lastThumbPos + QPointF(0, 138));
+	setSceneRect(base.rect());
+	lastThumbPos = QPointF(0, 0);
+	lastAnchorPos = QPointF(150, 150);
+	myText = new QGraphicsSimpleTextItem("");
 	myText->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	addItem(myText);
+	myText->setPos(lastThumbPos + QPointF(0, 138));
+	addCircleItem(32, 32);
+	addClipCircle(128);
 }
 
 RectItem* BlendScene::addRectItem(int width, int height) {
@@ -168,7 +211,7 @@ void BlendScene::removeAnchor() {
 	QList<QGraphicsItem*> pool;
 	for (auto item : items()) {
 		if (RectItem::Type == item->type() || CircleItem::Type == item->type()) {
-			lastAnchorPos = item->boundingRect().topLeft();
+			lastAnchorPos = item->sceneTransform().map(item->boundingRect().topLeft());
 			pool.append(item);
 		}
 	}
@@ -181,7 +224,7 @@ void BlendScene::removeThumb() {
 	for (auto item : items()) {
 		if (ClipRect::Type == item->type() || ClipCircle::Type == item->type() ||
 			FitRect::Type == item->type() || FitCircle::Type == item->type()) {
-			lastThumbPos = item->boundingRect().topLeft();
+			lastThumbPos = item->sceneTransform().map(item->boundingRect().topLeft());
 			pool.append(item);
 		}
 	}
@@ -189,12 +232,46 @@ void BlendScene::removeThumb() {
 		delete i;
 }
 
+QPointF BlendScene::AnchorPos() const {
+	for (auto item : items()) {
+		if (RectItem::Type == item->type() || CircleItem::Type == item->type()) {
+			return item->sceneTransform().map(item->pos());
+		}
+	}
+}
+
+QPointF BlendScene::ThumbPos() const {
+	for (auto item : items()) {
+		if (ClipRect::Type == item->type() || ClipCircle::Type == item->type() ||
+			FitRect::Type == item->type() || FitCircle::Type == item->type()) {
+			return item->sceneTransform().map(item->pos());
+		}
+	}
+}
+
+QGraphicsItem* BlendScene::getAnchor() {
+	for (auto item : items()) {
+		if (RectItem::Type == item->type() || CircleItem::Type == item->type()) {
+			return item;
+		}
+	}
+}
+
+QGraphicsItem* BlendScene::getThumb() {
+	for (auto item : items()) {
+		if (ClipRect::Type == item->type() || ClipCircle::Type == item->type() ||
+			FitRect::Type == item->type() || FitCircle::Type == item->type()) {
+			return item;
+		}
+	}
+}
+
 void BlendScene::setPen1(const QPen& p) {
 	for (auto item : items()) {
-		if (auto i = qgraphicsitem_cast<RectItem*>(item)) {
+		if (auto i = dynamic_cast<RectItem*>(item)) {
 			i->setPen1(p);
 		}
-		else if (auto i = qgraphicsitem_cast<CircleItem*>(item)) {
+		else if (auto i = dynamic_cast<CircleItem*>(item)) {
 			i->setPen1(p);
 		}
 	}
@@ -202,10 +279,10 @@ void BlendScene::setPen1(const QPen& p) {
 
 void BlendScene::setPen2(const QPen& p) {
 	for (auto item : items()) {
-		if (auto i = qgraphicsitem_cast<RectItem*>(item)) {
+		if (auto i = dynamic_cast<RectItem*>(item)) {
 			i->setPen2(p);
 		}
-		else if (auto i = qgraphicsitem_cast<CircleItem*>(item)) {
+		else if (auto i = dynamic_cast<CircleItem*>(item)) {
 			i->setPen2(p);
 		}
 	}
