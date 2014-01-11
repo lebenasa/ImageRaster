@@ -120,37 +120,40 @@ void StateManager::RulerChanged(RulerState mode) {
 
 void StateManager::cmrSelect(QGraphicsSceneMouseEvent *event, MouseState ms) {
 	if (MouseState::Click == ms) {
-		if (Qt::LeftButton != event->button()) return;
-		p1 = event->scenePos();
-		if (!scene->sceneRect().contains(p1)) return;
-		isDragged = true;
-		p2 = p1;
-		for (auto item : scene->items())
-			item->setSelected(false);
+		//if (Qt::LeftButton != event->button()) return;
+		//p1 = event->scenePos();
+		//if (!scene->sceneRect().contains(p1)) return;
+		//isDragged = true;
+		//p2 = p1;
+		//for (auto item : scene->items())
+		//	item->setSelected(false);
+		scene->defaultPressEvent(event);
 	}
 	else if (MouseState::Move == ms) {
-		if (!isDragged) return;
-		p2 = event->scenePos();
-		if (!scene->sceneRect().contains(p2)) return;
-		QRectF r(p1, p2);
-		QPen p(QBrush(Qt::blue), 1, Qt::DashLine);
-		QBrush b(QColor(0, 0, 255, 64));
-		if (hasTmpItem) delete tmpRect;
-		tmpRect = new QGraphicsRectItem(r.normalized());
-		tmpRect->setPen(p);
-		tmpRect->setBrush(b);
-		scene->addItem(tmpRect);
-		hasTmpItem = true;
+		//if (!isDragged) return;
+		//p2 = event->scenePos();
+		//if (!scene->sceneRect().contains(p2)) return;
+		//QRectF r(p1, p2);
+		//QPen p(QBrush(Qt::blue), 1, Qt::DashLine);
+		//QBrush b(QColor(0, 0, 255, 64));
+		//if (hasTmpItem) delete tmpRect;
+		//tmpRect = new QGraphicsRectItem(r.normalized());
+		//tmpRect->setPen(p);
+		//tmpRect->setBrush(b);
+		//scene->addItem(tmpRect);
+		//hasTmpItem = true;
+		scene->defaultMoveEvent(event);
 	}
 	else if (MouseState::Release == ms) {
-		if (Qt::LeftButton != event->button()) return;
-		isDragged = false;
-		if (hasTmpItem) delete tmpRect;
-		hasTmpItem = false;
-		p2 = (scene->sceneRect().contains(event->scenePos())) ? event->scenePos() : p2;
-		QRectF r(p1, p2);
-		for (QGraphicsItem* obj : scene->items(r, Qt::IntersectsItemShape))
-			obj->setSelected(true);
+		//if (Qt::LeftButton != event->button()) return;
+		//isDragged = false;
+		//if (hasTmpItem) delete tmpRect;
+		//hasTmpItem = false;
+		//p2 = (scene->sceneRect().contains(event->scenePos())) ? event->scenePos() : p2;
+		//QRectF r(p1, p2);
+		//for (QGraphicsItem* obj : scene->items(r, Qt::IntersectsItemShape))
+		//	obj->setSelected(true);
+		scene->defaultReleaseEvent(event);
 	}
 }
 

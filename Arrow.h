@@ -1,6 +1,43 @@
 #pragma once
 #include "qgraphicsitem.h"
 
+//Custom Item:
+class SimpleTextItem :
+	public QGraphicsSimpleTextItem
+{
+	QGraphicsRectItem *frame;
+public:
+	SimpleTextItem(const QString& txt, QGraphicsItem *parent=0);
+
+	enum { Type = UserType + 23 };
+	int type() const { return Type; }
+
+	void setText(const QString& txt);
+};
+
+class EventHandler;
+class TextItem :
+	public QGraphicsTextItem
+{
+	EventHandler* handle;
+public:
+	TextItem(EventHandler* handler, const QString& txt, QGraphicsItem* parent=0);
+	
+	enum { Type = UserType + 24 };
+	int type() const { return Type; }
+
+protected:
+	void keyReleaseEvent(QKeyEvent* event);
+};
+
+class EventHandler
+{
+public:
+	EventHandler();
+	virtual void keyRelease(QKeyEvent* event) = 0;
+};
+
+//Markers:
 class Marker :
 	public mData,
 	public Container,
@@ -336,10 +373,11 @@ public:
 //Legend:
 class MarkerModel;
 class LegendItem:
-	public QGraphicsRectItem
+	public QGraphicsRectItem,
+	public EventHandler
 {
 	QList<QGraphicsEllipseItem*> marks;
-	QList<QGraphicsTextItem*> texts;
+	QList<TextItem*> texts;
 	MarkerModel* model;
 	QRectF generateRect() const;
 public:
@@ -350,6 +388,7 @@ public:
 	int type() const { return Type; }
 
 	void updateRect();
+	void keyRelease(QKeyEvent*);
 };
 
 //Blend:
@@ -462,3 +501,4 @@ public:
 
 	void setPix(const QPixmap& pix);
 };
+

@@ -160,7 +160,7 @@ BlendScene::BlendScene(const QString& source, const QPixmap& thumb, QObject* par
 	myText = new QGraphicsSimpleTextItem("");
 	myText->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 	addItem(myText);
-	myText->setPos(lastThumbPos + QPointF(0, 138));
+	myText->setPos(lastThumbPos + QPointF(100, 138));
 	addCircleItem(32, 32);
 	addClipCircle(128);
 }

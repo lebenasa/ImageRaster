@@ -481,6 +481,7 @@ void ImageRaster::initScene(const QString& imgName) {
 	scene->setSceneRect(pix.rect());
 
 	ui.graphicsView->setScene(scene);
+	ui.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
 	ui.graphicsView->show();
 	modeToolbar->setEnabled(true);
 
@@ -1373,6 +1374,9 @@ void ImageRaster::on_blendWizard_accepted() {
 	QGraphicsItem* anchor = blendWizard->getAnchor();
 	QGraphicsItem* thumb = blendWizard->getThumb();
 	QGraphicsSimpleTextItem* text = blendWizard->getText();
+	anchor->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	thumb->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+	text->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 	scene->addItem(anchor);
 	scene->addItem(thumb);
 	scene->addItem(text);

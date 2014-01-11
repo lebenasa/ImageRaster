@@ -11,6 +11,7 @@ class RasterScene :
 	void connectSignals();
 	StateManager *manager;
 	friend ImageRaster;
+	friend StateManager;
 public:
 	RasterScene(QObject *parent=0);
 	~RasterScene(void);
@@ -19,6 +20,16 @@ public slots:
 	void stateInterface(AppState);
 	void markerInterface(MarkerState);
 	void rulerInterface(RulerState);
+
+	void defaultPressEvent(QGraphicsSceneMouseEvent *event) {
+		QGraphicsScene::mousePressEvent(event);
+	}
+	void defaultMoveEvent(QGraphicsSceneMouseEvent *event) {
+		QGraphicsScene::mouseMoveEvent(event);
+	}
+	void defaultReleaseEvent(QGraphicsSceneMouseEvent *event) {
+		QGraphicsScene::mouseReleaseEvent(event);
+	}
 
 signals:
 	void stateChanged(AppState);

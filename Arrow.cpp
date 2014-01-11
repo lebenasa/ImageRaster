@@ -449,7 +449,8 @@ QString CircleRuler::defaultText() const {
 	QString r = "Radius:\t" + QString().setNum(radius()*mod()) + unit() + "\n";
 	QString d = "Diameter:\t" + QString().setNum(radius()*2*mod()) + unit() + "\n";
 	QString a = "Area:\t" + QString().setNum(radius()*radius()*3.14*mod()*mod()) + unit() + QString::fromLatin1("²");
-	return r+d+a;
+	QString k = "Circumference:" + QString().setNum(2*radius()*3.14) + unit();
+	return d+a+k;
 }
 
 void CircleRuler::setPen1(const QPen& p) {
@@ -658,12 +659,12 @@ void SimpleScale::setText(const QString& t1, const QString& t2) {
 	QLineF l = line();
 	if (l.dx() == 0.0) {
 		//vertical line
-		text2->setPos(l.p1() + QPointF(10, -1.0*text1->boundingRect().height()/2));
-		text1->setPos(l.p2() + QPointF(10, -1.0*text2->boundingRect().height()/2));
+		text2->setPos(l.p1() + QPointF(15, -1.0*text1->boundingRect().height()/2));
+		text1->setPos(l.p2() + QPointF(15, -1.0*text2->boundingRect().height()/2));
 	}
 	else {
-		text1->setPos(l.p1() + QPointF(-1.0*text1->boundingRect().width()/2, 10));
-		text2->setPos(l.p2() + QPointF(-1.0*text2->boundingRect().width()/2, 10));
+		text1->setPos(l.p1() + QPointF(-1.0*text1->boundingRect().width()/2, 15));
+		text2->setPos(l.p2() + QPointF(-1.0*text2->boundingRect().width()/2, 15));
 	}
 }
 
@@ -717,12 +718,12 @@ void BarScale::setText(const QString& t1, const QString& t2) {
 	QLineF l = line();
 	if (l.dx() == 0.0) {
 		//vertical line
-		text2->setPos(l.p1() + QPointF(10, -1.0*text1->boundingRect().height()/2));
-		text1->setPos(l.p2() + QPointF(10, -1.0*text2->boundingRect().height()/2));
+		text2->setPos(l.p1() + QPointF(15, -1.0*text1->boundingRect().height()/2));
+		text1->setPos(l.p2() + QPointF(15, -1.0*text2->boundingRect().height()/2));
 	}
 	else {
-		text1->setPos(l.p1() + QPointF(-1.0*text1->boundingRect().width()/2, 10));
-		text2->setPos(l.p2() + QPointF(-1.0*text2->boundingRect().width()/2, 10));
+		text1->setPos(l.p1() + QPointF(-1.0*text1->boundingRect().width()/2, 15));
+		text2->setPos(l.p2() + QPointF(-1.0*text2->boundingRect().width()/2, 15));
 	}
 }
 
@@ -746,6 +747,7 @@ RulerScale::RulerScale(const QLineF& l, QGraphicsItem* parent) :
 				}
 				QLineF li = QLineF(l.p1()+QPointF(min, (0.1*i+0.01*j)*l.length()), l.p1()+QPointF(-min, (0.1*i+0.01*j)*l.length()));
 				LineItem* tick = new LineItem(li, this);
+				tick->setPen1(QPen(Qt::black, 0));
 				ticks.append(tick);
 			}
 			QLineF li = QLineF(l.p1()+QPointF(may, 0.1*i*l.length()), l.p1()+QPointF(-may, 0.1*i*l.length()));
@@ -788,7 +790,7 @@ void RulerScale::setPen2(const QPen& p) {
 
 //class LegendItem
 LegendItem::LegendItem(MarkerModel* m, const QPointF& origin, QGraphicsItem* parent) :
-	QGraphicsRectItem(QRectF(origin, QSizeF(10, 10)), parent)
+	QGraphicsRectItem(QRectF(origin, QSizeF(10, 10)), parent), EventHandler()
 {
 	model = m;
 	QList<QString> labels;
@@ -816,7 +818,7 @@ LegendItem::LegendItem(MarkerModel* m, const QPointF& origin, QGraphicsItem* par
 	}
 	//Generate texts:
 	for (int i=0; i<labels.size(); ++i) {
-		QGraphicsTextItem* text = new QGraphicsTextItem(labels.at(i), this);
+		TextItem* text = new TextItem(this, labels.at(i), this);
 		QFont font = text->font();
 		font.setPointSize(12);
 		text->setFont(font);
@@ -826,26 +828,36 @@ LegendItem::LegendItem(MarkerModel* m, const QPointF& origin, QGraphicsItem* par
 		texts.append(text);
 	}
 	//Wrap them all:
-	QPointF tl = origin;
-	QPointF br = origin + QPointF(10+10+10*11,
-		(marks.size()-1)*20+10);
-	QRectF bound = QRectF(tl + QPointF(-10, -10), br + QPointF(10, 10));
-	setRect(bound);
+	setRect(generateRect());
 
 	//Default format:
 	setPen(QPen(QBrush(Qt::black), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
-	setBrush(QBrush(Qt::white));
+	setBrush(QBrush(QColor(255, 255, 255, 128)));
 	setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 }
 
 QRectF LegendItem::generateRect() const {
-	QPointF tl = marks.at(0)->boundingRect().topLeft();
-	QPointF br = texts.at(texts.size()-1)->boundingRect().bottomRight();
+	QPointF tl = mapFromItem(marks.at(0), marks.at(0)->boundingRect().topLeft());
+	//Search for longest words:
+	int count = 0;
+	TextItem* txt;
+	for (auto t : texts) {
+		if (t->toPlainText().count() > count) {
+			count = t->toPlainText().count();
+			txt = t;
+		}
+	}
+	QPointF br = mapFromItem(texts.at(texts.size()-1), texts.at(texts.size()-1)->boundingRect().bottomRight());
+	br.setX(tl.x()+marks.at(0)->boundingRect().width()+txt->boundingRect().width()+10);
 	return QRectF(tl + QPointF(-10, -10), br + QPointF(10, 10));
 }
 
 void LegendItem::updateRect() {
 	setRect(generateRect());
+}
+
+void LegendItem::keyRelease(QKeyEvent* event) {
+	updateRect();
 }
 
 //class RectItem
@@ -1009,3 +1021,34 @@ void FitCircle::setPix(const QPixmap& pix) {
 	pix_brush.setTransform(QTransform::fromTranslate(currentTL.x(), currentTL.y()));
 	setBrush(pix_brush);
 }
+
+//class SimpleTextItem
+SimpleTextItem::SimpleTextItem(const QString& txt, QGraphicsItem *parent) :
+	QGraphicsSimpleTextItem(txt, parent)
+{
+	frame = new QGraphicsRectItem(this->boundingRect(), this);
+	frame->setPen(Qt::NoPen);
+	frame->setBrush(QBrush(QColor(255, 255, 255, 128)));
+}
+
+void SimpleTextItem::setText(const QString& txt) {
+	QGraphicsSimpleTextItem::setText(txt);
+	frame->setRect(boundingRect());
+}
+
+//class TextItem
+TextItem::TextItem(EventHandler* handler, const QString& txt, QGraphicsItem* parent) :
+	QGraphicsTextItem(txt, parent)
+{
+	handle = handler;
+	setTextInteractionFlags(Qt::TextEditorInteraction);
+}
+
+void TextItem::keyReleaseEvent(QKeyEvent* event) {
+	QGraphicsTextItem::keyPressEvent(event);
+	handle->keyRelease(event);
+}
+
+//class EventHandler
+EventHandler::EventHandler()
+{}
