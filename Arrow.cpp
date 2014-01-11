@@ -87,7 +87,7 @@ ArrowMarker::ArrowMarker(const QLineF& l, Container *branch) :
 {
 	bgA = new Arrow(line(), this, (int)ArrowHead::Start);
 	bgA->setFlag(QGraphicsItem::ItemStacksBehindParent);
-	myText = new QGraphicsSimpleTextItem(this);
+	myText = new SimpleTextItem("", this);
 	myText->setPos(textBaseline());
 }
 
@@ -262,7 +262,7 @@ LineRuler::LineRuler(const QLineF& l, Container* parent) :
 	Arrow(l),
 	Ruler(parent)
 {
-	myText = new QGraphicsSimpleTextItem(this);
+	myText = new SimpleTextItem("", this);
 	bg = new Arrow(l, this);
 	myText->setFont(myFont);
 	myText->setBrush(QBrush(myInPen.color()));
@@ -449,7 +449,7 @@ QString CircleRuler::defaultText() const {
 	QString r = "Radius:\t" + QString().setNum(radius()*mod()) + unit() + "\n";
 	QString d = "Diameter:\t" + QString().setNum(radius()*2*mod()) + unit() + "\n";
 	QString a = "Area:\t" + QString().setNum(radius()*radius()*3.14*mod()*mod()) + unit() + QString::fromLatin1("²");
-	QString k = "Circumference:" + QString().setNum(2*radius()*3.14) + unit();
+	QString k = "Circumference:" + QString().setNum(2*radius()*3.14) + unit() + "\n";
 	return d+a+k;
 }
 
@@ -635,8 +635,8 @@ SimpleScale::SimpleScale(const QLineF& l, QGraphicsItem* parent) :
 	}
 	tick1 = new LineItem(t1, this);
 	tick2 = new LineItem(t2, this);
-	text1 = new QGraphicsSimpleTextItem("0", this);
-	text2 = new QGraphicsSimpleTextItem("", this);
+	text1 = new SimpleTextItem("0", this);
+	text2 = new SimpleTextItem("", this);
 }
 
 void SimpleScale::setPen1(const QPen& p) {
@@ -687,8 +687,8 @@ BarScale::BarScale(const QLineF& l, QGraphicsItem* parent) :
 			stripes.append(stripe);
 		}
 	}
-	text1 = new QGraphicsSimpleTextItem("0", this);
-	text2 = new QGraphicsSimpleTextItem("", this);
+	text1 = new SimpleTextItem("0", this);
+	text2 = new SimpleTextItem("", this);
 	//Default format:
 	QPen p1 = QPen(QBrush(Qt::black), 10, Qt::SolidLine, Qt::FlatCap);
 	QPen p2 = QPen(QBrush(Qt::white), 10, Qt::SolidLine, Qt::FlatCap);
@@ -1029,6 +1029,7 @@ SimpleTextItem::SimpleTextItem(const QString& txt, QGraphicsItem *parent) :
 	frame = new QGraphicsRectItem(this->boundingRect(), this);
 	frame->setPen(Qt::NoPen);
 	frame->setBrush(QBrush(QColor(255, 255, 255, 128)));
+	frame->setFlag(QGraphicsItem::ItemStacksBehindParent);
 }
 
 void SimpleTextItem::setText(const QString& txt) {

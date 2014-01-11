@@ -79,7 +79,7 @@ class ArrowMarker :
 	public Marker
 {
 	Arrow *bgA;
-	QGraphicsSimpleTextItem *myText;
+	SimpleTextItem *myText;
 	QLineF load_oneClickLine(const QLineF& l);
 protected:
 	virtual QPointF textBaseline() const;
@@ -171,7 +171,7 @@ class LineRuler:
 	bool showArrow;
 protected:
 	Arrow* bg;
-	QGraphicsSimpleTextItem* myText;
+	SimpleTextItem* myText;
 	virtual QPointF calculateTextPos() const;
 public:
 	LineRuler(const QLineF& l, Container* parent=0);
@@ -320,7 +320,7 @@ public:
 class SimpleScale:
 	public LineItem
 {
-	QGraphicsSimpleTextItem *text1, *text2;
+	SimpleTextItem *text1, *text2;
 	LineItem *tick1, *tick2;
 	QPen pen1, pen2;
 public:
@@ -339,7 +339,7 @@ public:
 class BarScale:
 	public LineItem
 {
-	QGraphicsSimpleTextItem *text1, *text2;
+	SimpleTextItem *text1, *text2;
 	QList<QGraphicsLineItem*> stripes;
 	QPen pen1, pen2;
 public:

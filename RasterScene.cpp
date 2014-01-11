@@ -238,6 +238,7 @@ QPointF BlendScene::AnchorPos() const {
 			return item->sceneTransform().map(item->pos());
 		}
 	}
+	return QPointF();
 }
 
 QPointF BlendScene::ThumbPos() const {
@@ -247,6 +248,7 @@ QPointF BlendScene::ThumbPos() const {
 			return item->sceneTransform().map(item->pos());
 		}
 	}
+	return QPointF();
 }
 
 QGraphicsItem* BlendScene::getAnchor() {
@@ -255,6 +257,7 @@ QGraphicsItem* BlendScene::getAnchor() {
 			return item;
 		}
 	}
+	return nullptr;
 }
 
 QGraphicsItem* BlendScene::getThumb() {
@@ -264,6 +267,7 @@ QGraphicsItem* BlendScene::getThumb() {
 			return item;
 		}
 	}
+	return nullptr;
 }
 
 void BlendScene::setPen1(const QPen& p) {
