@@ -87,6 +87,7 @@ public:
 	}
 	void addLeaf(Container* leaf) {
 		leaves.append(leaf);
+		leaf->setBranch(this);
 	}
 	void removeLeaf(Container* leaf) {
 		leaves.removeOne(leaf);
@@ -98,9 +99,12 @@ public:
 		return branch; 
 	}
 	void setBranch(Container* newBranch) {
-		branch->removeLeaf(this);
+		//if (branch) branch->removeLeaf(this);
 		branch = newBranch;
-		newBranch->addLeaf(this);
+		//newBranch->addLeaf(this);
+	}
+	void unbranch() {
+		branch->removeLeaf(this);
 	}
 	~Container() {
 		if (branch) branch->removeLeaf(this);

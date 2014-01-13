@@ -100,6 +100,7 @@ public:
 	MarkerBranch* at(int);
 	void updateWidgets();
 	bool insertBranch(int row, MarkerBranch* b, const QModelIndex& parent = QModelIndex());
+	std::vector<MarkerBranch*> branches() { return myData; }
 signals:
 	void labelChg(MarkerBranch*, QString, QString);
 	void color1Chg(MarkerBranch*, QColor, QColor);

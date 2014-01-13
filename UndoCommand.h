@@ -295,3 +295,15 @@ public:
 	//bool mergeWith(const QUndoCommand* other);
 };
 
+class RemoveItems:
+	public QUndoCommand
+{
+	QList<QGraphicsItem*> items;
+	QList<Container*> branches;
+	ImageRaster* raster;
+public:
+	RemoveItems(QList<QGraphicsItem*>, ImageRaster*, QUndoCommand* parent=0);
+
+	void undo();
+	void redo();
+};

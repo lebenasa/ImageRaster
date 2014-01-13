@@ -322,7 +322,7 @@ void ImageRaster::createToolbars() {
 
 	profileBar = new QToolBar(this);
 	profileCombo = new QComboBox(profileBar);
-	profileBar->addWidget(new QLabel("Profile:   ", profileBar));
+	profileBar->addWidget(new QLabel("Profile: ", profileBar));
 	profileBar->addWidget(profileCombo);
 	profileCombo->setModel(profileModel);
 	modCombo = new QComboBox(profileBar);
@@ -331,7 +331,7 @@ void ImageRaster::createToolbars() {
 	modCombo->addItem("cm", Qt::DisplayRole);
 	modCombo->addItem("m", Qt::DisplayRole);
 	profileBar->addSeparator();
-	profileBar->addWidget(new QLabel("Unit:	  ", profileBar));
+	profileBar->addWidget(new QLabel("Unit:  ", profileBar));
 	profileBar->addWidget(modCombo);
 	addToolBar(Qt::TopToolBarArea, profileBar);
 	profileBar->hide();
@@ -349,6 +349,7 @@ void ImageRaster::connectSignals() {
 	connect(zoomToActualAct, &QAction::triggered, this, &ImageRaster::zoomToActual);
 
 	connect(saveImageAct, &QAction::triggered, this, &ImageRaster::saveImage);
+	connect(deleteItemAct, &QAction::triggered, this, &ImageRaster::deleteItem);
 
 	connect(modeToolbar, &nModeToolbar::ModeChanged, scene, &RasterScene::stateInterface);
 	connect(modeToolbar, &nModeToolbar::RulerChanged, scene, &RasterScene::rulerInterface);
@@ -481,7 +482,7 @@ void ImageRaster::initScene(const QString& imgName) {
 	scene->setSceneRect(pix.rect());
 
 	ui.graphicsView->setScene(scene);
-	ui.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+	//ui.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
 	ui.graphicsView->show();
 	modeToolbar->setEnabled(true);
 
@@ -523,6 +524,13 @@ void ImageRaster::saveImage() {
 }
 
 void ImageRaster::deleteItem() {
+	QList<QGraphicsItem*> items;
+	for (auto item : scene->items()) {
+		if (item->isSelected())
+			items.append(item);
+	}
+	RemoveItems* cmd = new RemoveItems(items, this);
+	undoStack->push(cmd);
 }
 
 void ImageRaster::zoomIn() {

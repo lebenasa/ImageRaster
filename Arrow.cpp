@@ -448,8 +448,8 @@ QPainterPath CircleRuler::shape() const {
 QString CircleRuler::defaultText() const {
 	QString r = "Radius:\t" + QString().setNum(radius()*mod()) + unit() + "\n";
 	QString d = "Diameter:\t" + QString().setNum(radius()*2*mod()) + unit() + "\n";
-	QString a = "Area:\t" + QString().setNum(radius()*radius()*3.14*mod()*mod()) + unit() + QString::fromLatin1("²");
-	QString k = "Circumference:" + QString().setNum(2*radius()*3.14) + unit() + "\n";
+	QString a = "Area:\t" + QString().setNum(radius()*radius()*3.14*mod()*mod()) + unit() + QString::fromLatin1("²") + "\n";
+	QString k = "Circumference:" + QString().setNum(2*radius()*3.14) + unit();
 	return d+a+k;
 }
 

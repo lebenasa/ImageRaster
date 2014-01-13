@@ -421,3 +421,40 @@ void RFontSizeChg::undo() {
 void RFontSizeChg::redo() {
 	branch->setFontSize(newValue);
 }
+
+RemoveItems::RemoveItems(QList<QGraphicsItem*> list, ImageRaster* ir, QUndoCommand* parent):
+	QUndoCommand("Delete items", parent) 
+{
+	items = list;
+	raster = ir;
+}
+
+void RemoveItems::undo() {
+	RasterScene* scene = raster->getScene();
+	int i=0;
+	for (auto item : items) {
+		if (auto it = (ArrowMarker*)item) {
+			if (it->parentItem() != nullptr)
+				continue;
+			branches[i]->addLeaf(it);
+			++i;
+		}
+		scene->addItem(item);
+	}
+	branches.clear();
+}
+
+void RemoveItems::redo() {
+	RasterScene* scene = raster->getScene();
+	for (auto item : items) {
+		if (auto i = (ArrowMarker*)item) {
+			if (i->parentItem() != nullptr)
+				continue;
+			branches.append(i->getBranch());
+			i->unbranch();
+			scene->removeItem(i);
+		}
+		else
+			scene->removeItem(item);
+	}
+}

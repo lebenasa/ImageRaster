@@ -42,6 +42,8 @@ public:
 	void sceneAddItem(QGraphicsItem* item);
 	void sceneRemoveItem(QGraphicsItem* item);
 
+	MarkerModel* getMarkerModel() { return markerModel; }
+
 	enum ScaleType {
 		Bar, Line, Simple };
 

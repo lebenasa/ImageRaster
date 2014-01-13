@@ -120,40 +120,46 @@ void StateManager::RulerChanged(RulerState mode) {
 
 void StateManager::cmrSelect(QGraphicsSceneMouseEvent *event, MouseState ms) {
 	if (MouseState::Click == ms) {
-		//if (Qt::LeftButton != event->button()) return;
-		//p1 = event->scenePos();
-		//if (!scene->sceneRect().contains(p1)) return;
-		//isDragged = true;
-		//p2 = p1;
-		//for (auto item : scene->items())
-		//	item->setSelected(false);
 		scene->defaultPressEvent(event);
+		if (scene->mouseGrabberItem() != nullptr)
+			return;
+		if (Qt::LeftButton != event->button()) return;
+		p1 = event->scenePos();
+		if (!scene->sceneRect().contains(p1)) return;
+		isDragged = true;
+		p2 = p1;
+		for (auto item : scene->items())
+			item->setSelected(false);
 	}
 	else if (MouseState::Move == ms) {
-		//if (!isDragged) return;
-		//p2 = event->scenePos();
-		//if (!scene->sceneRect().contains(p2)) return;
-		//QRectF r(p1, p2);
-		//QPen p(QBrush(Qt::blue), 1, Qt::DashLine);
-		//QBrush b(QColor(0, 0, 255, 64));
-		//if (hasTmpItem) delete tmpRect;
-		//tmpRect = new QGraphicsRectItem(r.normalized());
-		//tmpRect->setPen(p);
-		//tmpRect->setBrush(b);
-		//scene->addItem(tmpRect);
-		//hasTmpItem = true;
 		scene->defaultMoveEvent(event);
+		if (scene->mouseGrabberItem() != nullptr)
+			return;
+		if (!isDragged) return;
+		p2 = event->scenePos();
+		if (!scene->sceneRect().contains(p2)) return;
+		QRectF r(p1, p2);
+		QPen p(QBrush(Qt::blue), 1, Qt::DashLine);
+		QBrush b(QColor(0, 0, 255, 64));
+		if (hasTmpItem) delete tmpRect;
+		tmpRect = new QGraphicsRectItem(r.normalized());
+		tmpRect->setPen(p);
+		tmpRect->setBrush(b);
+		scene->addItem(tmpRect);
+		hasTmpItem = true;
 	}
 	else if (MouseState::Release == ms) {
-		//if (Qt::LeftButton != event->button()) return;
-		//isDragged = false;
-		//if (hasTmpItem) delete tmpRect;
-		//hasTmpItem = false;
-		//p2 = (scene->sceneRect().contains(event->scenePos())) ? event->scenePos() : p2;
-		//QRectF r(p1, p2);
-		//for (QGraphicsItem* obj : scene->items(r, Qt::IntersectsItemShape))
-		//	obj->setSelected(true);
 		scene->defaultReleaseEvent(event);
+		if (scene->mouseGrabberItem() != nullptr)
+			return;
+		if (Qt::LeftButton != event->button()) return;
+		isDragged = false;
+		if (hasTmpItem) delete tmpRect;
+		hasTmpItem = false;
+		p2 = (scene->sceneRect().contains(event->scenePos())) ? event->scenePos() : p2;
+		QRectF r(p1, p2);
+		for (QGraphicsItem* obj : scene->items(r, Qt::IntersectsItemShape))
+			obj->setSelected(true);
 	}
 }
 
@@ -282,7 +288,7 @@ void StateManager::cmrRulerLine(QGraphicsSceneMouseEvent *event, MouseState ms)	
 	if (MouseState::Click == ms) {
 		p1 = event->scenePos();
 		if (!scene->sceneRect().contains(p1)) return;
-		if (scene->items(p1).count() > 1) return;	//To ensure no overlap
+		//if (scene->items(p1).count() > 1) return;	//To ensure no overlap
 		isDragged = true;
 		p2 = p1 + QPointF(1, 1);					//To ensure a valid QLineF
 	}
@@ -324,7 +330,7 @@ void StateManager::cmrRulerRectangle(QGraphicsSceneMouseEvent *event, MouseState
 	if (MouseState::Click == ms) {
 		p1 = event->scenePos();
 		if (!scene->sceneRect().contains(p1)) return;
-		if (scene->items(p1).count() > 1) return;	//To ensure no overlap
+		//if (scene->items(p1).count() > 1) return;	//To ensure no overlap
 		isDragged = true;
 		p2 = p1 + QPointF(1, 1);					//To ensure a valid QLineF
 	}
@@ -361,7 +367,7 @@ void StateManager::cmrRulerCircle(QGraphicsSceneMouseEvent *event, MouseState ms
 	}
 	if (MouseState::Click == ms) {
 		if (!scene->sceneRect().contains(event->scenePos())) return;
-		if (scene->items(event->scenePos()).count() > 1) return;	//To ensure no overlap
+		//if (scene->items(event->scenePos()).count() > 1) return;	//To ensure no overlap
 		QPen pen = QPen(Qt::black);
 		pen.setWidth(2);
 		if (0 == click) {
@@ -399,7 +405,7 @@ void StateManager::cmrRulerCentertoCenter(QGraphicsSceneMouseEvent *event, Mouse
 	}
 	if (MouseState::Click == ms) {
 		if (!scene->sceneRect().contains(event->scenePos())) return;
-		if (scene->items(event->scenePos()).count() > 1) return;	//To ensure no overlap
+		//if (scene->items(event->scenePos()).count() > 1) return;	//To ensure no overlap
 		QPen pen = QPen(Qt::black);
 		pen.setWidth(2);
 		if (0 == click) {
@@ -458,7 +464,7 @@ void StateManager::cmrRulerCentertoCenter(QGraphicsSceneMouseEvent *event, Mouse
 void StateManager::cmrRulerPolygon(QGraphicsSceneMouseEvent *event, MouseState ms)	{
 	if (MouseState::Click == ms) {
 		if (!scene->sceneRect().contains(event->scenePos())) return;
-		if (scene->items(event->scenePos()).count() > 1) return;	//To ensure no overlap
+		//if (scene->items(event->scenePos()).count() > 1) return;	//To ensure no overlap
 		QPen pen = QPen(Qt::black);
 		pen.setWidth(2);
 		if (0 == click) {
