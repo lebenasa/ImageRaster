@@ -190,6 +190,9 @@
     <ClInclude Include="GeneratedFiles\ui_ScaleDock.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="imageraster.h">
@@ -265,5 +268,8 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="RasterSettings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
 </Project>
