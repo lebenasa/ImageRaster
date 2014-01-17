@@ -22,7 +22,7 @@ ImageRaster::ImageRaster(QWidget *parent)
 	createActions();
 	createToolbars();
 	//for debugging purpose:
-	initScene(QDir::homePath()+"/oreimo.jpg");
+	//initScene(QDir::homePath()+"/oreimo.jpg");
 	markerIndex = 0;
 	modifier = 1.0;
 }
@@ -1104,6 +1104,26 @@ void ImageRaster::rWidthChg(int old, int n) {
 	RulerModel* model = (RulerModel*)sender();
 	RWidthChg* cmd = new RWidthChg(model, old, n);
 	undoStack->push(cmd);
+}
+
+void ImageRaster::deleteRuler(LineRuler* ruler) {
+	bool t = lrModel->removeRuler(ruler);
+	if (t) return;
+	t = crModel->removeRuler(ruler);
+	if (t) return;
+	t = rrModel->removeRuler(ruler);
+	if (t) return;
+	t = tcModel->removeRuler(ruler);
+	if (t) return;
+	t = prModel->removeRuler(ruler);
+}
+
+void ImageRaster::addRuler(int type, LineRuler* ruler) {
+	if (LineRuler::Type == type) lrModel->insertBranch(lrModel->rowCount(), ruler);
+	else if (RectRuler::Type == type) rrModel->insertBranch(rrModel->rowCount(), ruler);
+	else if (CircleRuler::Type == type) crModel->insertBranch(crModel->rowCount(), ruler);
+	else if (Circle2Ruler::Type == type) tcModel->insertBranch(tcModel->rowCount(), ruler);
+	else if (PolyRuler::Type == type) prModel->insertBranch(prModel->rowCount(), ruler);
 }
 
 void ImageRaster::defaultText() {

@@ -48,7 +48,7 @@ public:
             ImageRasterClass->setObjectName(QStringLiteral("ImageRasterClass"));
         ImageRasterClass->resize(600, 400);
         QIcon icon;
-        icon.addFile(QStringLiteral(":/Resources/SmartRaster.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral(":/Resources/ImageRaster.ico"), QSize(), QIcon::Normal, QIcon::Off);
         ImageRasterClass->setWindowIcon(icon);
         actionScale = new QAction(ImageRasterClass);
         actionScale->setObjectName(QStringLiteral("actionScale"));

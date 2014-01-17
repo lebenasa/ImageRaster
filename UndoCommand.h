@@ -299,7 +299,9 @@ class RemoveItems:
 	public QUndoCommand
 {
 	QList<QGraphicsItem*> items;
-	QList<Container*> branches;
+	QList<QPair<ArrowMarker*, Container*> > markers;
+	QMap<int, QList<LineRuler*> > rulers;
+	QList<QGraphicsItem*> EE;
 	ImageRaster* raster;
 public:
 	RemoveItems(QList<QGraphicsItem*>, ImageRaster*, QUndoCommand* parent=0);

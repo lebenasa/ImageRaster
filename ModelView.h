@@ -196,6 +196,7 @@ public:
 	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 	bool insertRows(int row, int count, const QModelIndex& parent = QModelIndex());
 	bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex());
+	bool removeRuler(LineRuler* ruler, const QModelIndex& parent = QModelIndex());
 
 	LineRuler* at(int);
 	void updateWidgets();

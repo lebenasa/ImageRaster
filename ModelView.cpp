@@ -591,6 +591,24 @@ bool RulerModel::removeRows(int row, int count, const QModelIndex& parent) {
 	return true;
 }
 
+bool RulerModel::removeRuler(LineRuler* ruler, const QModelIndex& parent) {
+	int pos;
+	bool success = false;
+	for (int i=0; i < rowCount(); ++i) {
+		auto p = myData.at(i);
+		if (ruler == p) {
+			pos = i;
+			success = true;
+		}
+	}
+	if (!success) return false;
+	beginRemoveRows(parent, pos, pos);
+	auto dat = myData.begin() + pos;
+	myData.erase(dat);
+	endRemoveRows();
+	return true;
+}
+
 LineRuler* RulerModel::at(int i) {
 	if (myData.size() > i && 0 <= i)
 		return myData.at(i);

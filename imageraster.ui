@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="imageraster.qrc">
-    <normaloff>:/Resources/SmartRaster.png</normaloff>:/Resources/SmartRaster.png</iconset>
+    <normaloff>:/Resources/ImageRaster.ico</normaloff>:/Resources/ImageRaster.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">

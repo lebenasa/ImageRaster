@@ -187,6 +187,9 @@ public slots:
 	void rWidthChg(int, int);
 	void defaultText();
 
+	void deleteRuler(LineRuler*);
+	void addRuler(int type, LineRuler* ruler);
+
 	void addRR(RectRuler*);
 	void updateRR();
 

@@ -427,34 +427,64 @@ RemoveItems::RemoveItems(QList<QGraphicsItem*> list, ImageRaster* ir, QUndoComma
 {
 	items = list;
 	raster = ir;
+	QList<LineRuler*> lr, rr, cr, tc, pr;
+	rulers.insert(LineRuler::Type, lr);
+	rulers.insert(RectRuler::Type, rr);
+	rulers.insert(CircleRuler::Type, cr);
+	rulers.insert(Circle2Ruler::Type, tc);
+	rulers.insert(PolyRuler::Type, pr);
+
+	RasterScene* scene = raster->getScene();
+	for (auto item : items) {
+		if (auto i = dynamic_cast<ArrowMarker*>(item)) {
+			if (i->parentItem() != nullptr)
+				continue;
+			QPair<ArrowMarker*, Container*> pair;
+			pair.first = i;
+			pair.second = i->getBranch();
+			markers.append(pair);
+		}
+		else if (rulers.contains(item->type())) {
+			if (item->parentItem() != nullptr)
+				continue;
+			rulers[item->type()].append((LineRuler*)item);
+		}
+		else {
+			if (item->parentItem() != nullptr)
+				continue;
+			EE.append(item);
+		}
+	}
 }
 
 void RemoveItems::undo() {
 	RasterScene* scene = raster->getScene();
-	int i=0;
-	for (auto item : items) {
-		if (auto it = (ArrowMarker*)item) {
-			if (it->parentItem() != nullptr)
-				continue;
-			branches[i]->addLeaf(it);
-			++i;
-		}
-		scene->addItem(item);
+	for (auto p : markers) {
+		p.second->addLeaf(p.first);
+		scene->addItem(p.first);
 	}
-	branches.clear();
+	for (auto i = rulers.begin(); i != rulers.end(); ++i) {
+		for (auto p : i.value()) {
+			raster->addRuler(i.key(), p);
+			scene->addItem(p);
+		}
+	}
+	for (auto p : EE)
+		scene->addItem(p);
 }
 
 void RemoveItems::redo() {
 	RasterScene* scene = raster->getScene();
-	for (auto item : items) {
-		if (auto i = (ArrowMarker*)item) {
-			if (i->parentItem() != nullptr)
-				continue;
-			branches.append(i->getBranch());
-			i->unbranch();
-			scene->removeItem(i);
-		}
-		else
-			scene->removeItem(item);
+	for (auto p : markers) {
+		p.first->unbranch();
+		scene->removeItem(p.first);
 	}
+	for (auto i = rulers.begin(); i != rulers.end(); ++i) {
+		for (auto p : i.value()) {
+			raster->deleteRuler(p);
+			scene->removeItem(p);
+		}
+	}
+	for (auto p : EE)
+		scene->removeItem(p);
 }
